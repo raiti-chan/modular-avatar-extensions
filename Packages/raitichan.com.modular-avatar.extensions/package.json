@@ -1,0 +1,17 @@
+{
+  "name": "raitichan.com.modular-avatar.extensions",
+  "displayName": "Modular Avatar Extensions",
+  "version": "0.0.1",
+  "unity": "2019.4",
+  "description": "Describe this Package",
+  "author": {
+	  "name": "Raitichan",
+	  "email": "",
+	  "url": ""
+  },
+  "url": "",
+  "vpmDependencies": {
+    "com.vrchat.avatars": "3.1.10",
+	"nadena.dev.modular-avatar": ">=1.1.2"
+  }
+}

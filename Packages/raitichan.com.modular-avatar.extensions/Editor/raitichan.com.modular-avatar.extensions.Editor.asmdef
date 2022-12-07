@@ -1,0 +1,20 @@
+{
+    "name": "raitichan.com.modular-avatar.extensions.Editor",
+    "references": [
+        "raitichan.com.modular-avatar.extensions",
+        "VRC.SDK3A",
+        "nadena.dev.modular-avatar.core",
+        "nadena.dev.modular-avatar.core.editor"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": false,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
