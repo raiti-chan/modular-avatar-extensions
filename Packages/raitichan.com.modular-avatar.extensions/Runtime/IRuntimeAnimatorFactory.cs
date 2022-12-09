@@ -7,7 +7,7 @@ namespace raitichan.com.modular_avatar.extensions {
 		RuntimeAnimatorController CreateController(GameObject avatarGameObject);
 	}
 	
-	public interface IRuntimeAnimatorFactory<ModuleType> : IRuntimeAnimatorFactory where ModuleType : MaExAnimatorGeneratorModuleBase<ModuleType> {
+	public interface IRuntimeAnimatorFactory<ModuleType> : IRuntimeAnimatorFactory where ModuleType : MAExAnimatorGeneratorModuleBase<ModuleType> {
 		ModuleType Target { get; set; }
 	}	
 }

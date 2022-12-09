@@ -1,5 +1,4 @@
 ﻿using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
-using raitichan.com.modular_avatar.extensions.Editor.Utils;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
@@ -7,13 +6,13 @@ using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class EarIdleAnimationFactory : IRuntimeAnimatorFactory<MaExEarIdleAnimatorGenerator> {
-		public MaExEarIdleAnimatorGenerator Target { get; set; }
+	public class EarIdleAnimatorFactory : IRuntimeAnimatorFactory<MAExEarIdleAnimatorGenerator> {
+		public MAExEarIdleAnimatorGenerator Target { get; set; }
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
 			AnimatorController controller = UtilHelper.CreateAnimator();
 			AnimationClip clip = this.CreateClip();
-			MAAnimatorUtils.CreateIdleLayerToAnimatorController(controller, "EarAnimation", clip, "Ear Idle");
+			MAExAnimatorFactoryUtils.CreateIdleLayerToAnimatorController(controller, "EarAnimation", clip, "Ear Idle");
 			return controller;
 		}
 
@@ -35,7 +34,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 					binding.propertyName == "m_LocalRotation.y" ? Axis.Y :
 					binding.propertyName == "m_LocalRotation.z" ? Axis.Z : Axis.W;
 				Transform targetTransform = binding.path == "L" ? this.Target.leftEar : this.Target.rightEar;
-				newBinding.path = MAAnimatorUtils.GetBindingPath(targetTransform);
+				newBinding.path = MAExAnimatorFactoryUtils.GetBindingPath(targetTransform);
 				AnimationCurve curve = this.TransformCurve(AnimationUtility.GetEditorCurve(source, binding), targetTransform, axis);
 				clip.SetCurve(newBinding.path, newBinding.type, newBinding.propertyName, curve);
 			}

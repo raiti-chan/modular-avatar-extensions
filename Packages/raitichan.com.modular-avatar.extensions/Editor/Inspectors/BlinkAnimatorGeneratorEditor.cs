@@ -1,5 +1,4 @@
-﻿using nadena.dev.modular_avatar.core.editor;
-using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
+﻿using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
 using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
