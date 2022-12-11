@@ -9,12 +9,16 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	public class EarIdleAnimatorFactory : IRuntimeAnimatorFactory<MAExEarIdleAnimatorGenerator> {
 		public MAExEarIdleAnimatorGenerator Target { get; set; }
 
+		public void PreProcess(GameObject avatarGameObject) { }
+
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
 			AnimatorController controller = UtilHelper.CreateAnimator();
 			AnimationClip clip = this.CreateClip();
 			MAExAnimatorFactoryUtils.CreateIdleLayerToAnimatorController(controller, "EarAnimation", clip, "Ear Idle");
 			return controller;
 		}
+
+		public void PostProcess(GameObject avatarGameObject) { }
 
 		private enum Axis {
 			X,
@@ -48,10 +52,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				preWrapMode = source.preWrapMode,
 				postWrapMode = source.postWrapMode
 			};
-			float targetRotation = axis == Axis.X ? transform.localRotation.x :	
+			float targetRotation = axis == Axis.X ? transform.localRotation.x :
 				axis == Axis.Y ? transform.localRotation.y :
 				axis == Axis.Z ? transform.localRotation.z : transform.localRotation.w;
-			
+
 			Keyframe firstKey = source.keys.MinBy(key => key.time);
 			float offsetValue = firstKey.value - targetRotation;
 			float baseValue = firstKey.value - offsetValue;

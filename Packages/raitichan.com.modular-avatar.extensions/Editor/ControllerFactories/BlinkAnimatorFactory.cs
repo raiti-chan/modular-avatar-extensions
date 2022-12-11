@@ -9,13 +9,17 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	public class BlinkAnimatorFactory : IRuntimeAnimatorFactory<MAExBlinkAnimatorGenerator> {
 		public MAExBlinkAnimatorGenerator Target { get; set; }
 
+		public void PreProcess(GameObject avatarGameObject) { }
+
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
 			AnimatorController controller = UtilHelper.CreateAnimator();
 			AnimationClip clip = this.CreateClip();
 			MAExAnimatorFactoryUtils.CreateIdleLayerToAnimatorController(controller, "BlinkAnimation", clip, "Blink Idle");
-			
+
 			return controller;
 		}
+
+		public void PostProcess(GameObject avatarGameObject) { }
 
 		private AnimationClip CreateClip() {
 			AnimationClip source = this.Target.animationSource;
@@ -24,7 +28,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			clip.ClearCurves();
 
 			string blendShapeName = this.Target.faceMesh.sharedMesh.GetBlendShapeName(this.Target.blendShapeIndex);
-			
+
 			foreach (EditorCurveBinding binding in AnimationUtility.GetCurveBindings(source)) {
 				EditorCurveBinding newBinding = binding;
 				newBinding.path = MAExAnimatorFactoryUtils.GetBindingPath(this.Target.faceMesh.transform);
@@ -32,7 +36,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				AnimationCurve curve = AnimationUtility.GetEditorCurve(source, binding);
 				clip.SetCurve(newBinding.path, newBinding.type, newBinding.propertyName, curve);
 			}
-			
+
 			AnimationUtility.SetAnimationClipSettings(clip, AnimationUtility.GetAnimationClipSettings(source));
 			return clip;
 		}

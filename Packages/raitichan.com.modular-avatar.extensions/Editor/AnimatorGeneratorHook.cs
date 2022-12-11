@@ -12,7 +12,11 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 		internal void OnPreprocessAvatar(GameObject avatarGameObject) {
 			this._generatorModuleObjectsEnableMap = new Dictionary<GameObject, bool>();
 			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true);
-
+		
+			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
+				generatorModule.GetFactory().PreProcess(avatarGameObject);
+			}
+			
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
 				RuntimeAnimatorController controller = generatorModule.GetFactory().CreateController(avatarGameObject);
 				GameObject targetObject = generatorModule.gameObject;
@@ -27,6 +31,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 				mergeAnimator.deleteAttachedAnimator = generatorModule.DeleteAttachedAnimator;
 				mergeAnimator.pathMode = generatorModule.PathMode;
 				mergeAnimator.matchAvatarWriteDefaults = generatorModule.MatchAvatarWriteDefaults;
+			}
+			
+			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
+				generatorModule.GetFactory().PostProcess(avatarGameObject);
 			}
 		}
 

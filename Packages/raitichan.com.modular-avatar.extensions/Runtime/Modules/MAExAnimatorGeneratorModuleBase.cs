@@ -22,8 +22,9 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 		public override MergeAnimatorPathMode PathMode => MergeAnimatorPathMode.Absolute;
 		public override bool MatchAvatarWriteDefaults => false;
 
+		private IRuntimeAnimatorFactory _factory;
 		public override IRuntimeAnimatorFactory GetFactory() {
-			return GetFactory(this);
+			return _factory ?? (_factory = GetFactory(this));
 		}
 
 		private static IRuntimeAnimatorFactory<ModuleType> GetFactory(MAExAnimatorGeneratorModuleBase<ModuleType> module) {
