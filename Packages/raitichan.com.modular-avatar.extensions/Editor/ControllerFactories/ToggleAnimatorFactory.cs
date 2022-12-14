@@ -39,7 +39,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			ModularAvatarMenuInstaller menuInstaller = targetObject.GetComponent<ModularAvatarMenuInstaller>();
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
 			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
-				name = "name",
+				name = this.Target.displayName,
 				icon = null,
 				type = VRCExpressionsMenu.Control.ControlType.Toggle,
 				parameter = new VRCExpressionsMenu.Control.Parameter { name = this.Target.parameterName },

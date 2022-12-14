@@ -7,6 +7,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 	[CustomEditor(typeof(MAExToggleAnimatorGenerator))]
 	public class ToggleAnimatorGeneratorEditor : MAExEditorBase {
 		private SerializedProperty _parameterNameProperty;
+		private SerializedProperty _displayNameProperty;
 		private SerializedProperty _isInvertProperty;
 		private SerializedProperty _isInternalProperty;
 		private SerializedProperty _savedProperty;
@@ -14,6 +15,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 
 		private void OnEnable() {
 			this._parameterNameProperty = this.serializedObject.FindProperty(nameof(MAExToggleAnimatorGenerator.parameterName));
+			this._displayNameProperty = this.serializedObject.FindProperty(nameof(MAExToggleAnimatorGenerator.displayName));
 			this._isInvertProperty = this.serializedObject.FindProperty(nameof(MAExToggleAnimatorGenerator.isInvert));
 			this._isInternalProperty = this.serializedObject.FindProperty(nameof(MAExToggleAnimatorGenerator.isInternal));
 			this._savedProperty = this.serializedObject.FindProperty(nameof(MAExToggleAnimatorGenerator.saved));
@@ -24,6 +26,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 			this.serializedObject.Update();
 
 			EditorGUILayout.PropertyField(this._parameterNameProperty);
+			EditorGUILayout.PropertyField(this._displayNameProperty);
 			EditorGUILayout.PropertyField(this._isInvertProperty);
 			EditorGUILayout.PropertyField(this._isInternalProperty);
 			EditorGUILayout.PropertyField(this._savedProperty);

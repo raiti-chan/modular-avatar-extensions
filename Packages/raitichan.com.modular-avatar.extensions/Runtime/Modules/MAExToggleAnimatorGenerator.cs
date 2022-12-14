@@ -8,6 +8,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 	[AddComponentMenu("Modular Avatar/MAEx Toggle Animator Generator")]
 	public class MAExToggleAnimatorGenerator : MAExAnimatorGeneratorModuleBase<MAExToggleAnimatorGenerator> {
 		public string parameterName;
+		public string displayName;
 		public bool isInvert;
 		public bool isInternal;
 		public bool saved;
