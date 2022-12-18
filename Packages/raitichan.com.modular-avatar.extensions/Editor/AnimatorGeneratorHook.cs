@@ -11,7 +11,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 
 		internal void OnPreprocessAvatar(GameObject avatarGameObject) {
 			this._generatorModuleObjectsEnableMap = new Dictionary<GameObject, bool>();
-			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true);
+			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true)
+				.Where(module => module.enabled)
+				.ToArray();
 		
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
 				generatorModule.GetFactory().PreProcess(avatarGameObject);

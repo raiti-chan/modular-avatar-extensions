@@ -32,7 +32,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 				.SelectMany(assembly => assembly.GetTypes())
 				.Where(type => !type.IsAbstract && !type.IsInterface)
 				.First(type => typeof(IRuntimeAnimatorFactory<ModuleType>).IsAssignableFrom(type));
-			IRuntimeAnimatorFactory<ModuleType> instance = (IRuntimeAnimatorFactory<ModuleType>)Activator.CreateInstance(factoryType);
+			IRuntimeAnimatorFactory<ModuleType> instance = (IRuntimeAnimatorFactory<ModuleType>)System.Activator.CreateInstance(factoryType);
 			instance.Target = (ModuleType)module;
 			return instance;
 		}
