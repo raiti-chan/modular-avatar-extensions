@@ -1,6 +1,4 @@
-﻿using System;
-using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
-using raitichan.com.modular_avatar.extensions.Modules;
+﻿using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {

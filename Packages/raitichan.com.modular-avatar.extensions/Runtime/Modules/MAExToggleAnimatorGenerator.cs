@@ -9,6 +9,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 	public class MAExToggleAnimatorGenerator : MAExAnimatorGeneratorModuleBase<MAExToggleAnimatorGenerator> {
 		public string parameterName;
 		public string displayName;
+		public Texture2D menuIcon;
 		public bool isInvert;
 		public bool isInternal;
 		public bool saved;

@@ -40,7 +40,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
 			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
 				name = this.Target.displayName,
-				icon = null,
+				icon = this.Target.menuIcon,
 				type = VRCExpressionsMenu.Control.ControlType.Toggle,
 				parameter = new VRCExpressionsMenu.Control.Parameter { name = this.Target.parameterName },
 			});

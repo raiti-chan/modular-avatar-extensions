@@ -37,4 +37,6 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			return instance;
 		}
 	}
+
+
 }

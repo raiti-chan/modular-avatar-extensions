@@ -3,7 +3,7 @@ using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
+namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 	public class MAExEditorBase : UnityEditor.Editor {
 
 		private VisualElement _rootElement;
