@@ -8,7 +8,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 
 		static ModularAvatarExtensionsProcessor() {
 			AvatarProcessor.BeforeProcessing += ProcessAvatar;
-			AvatarProcessor.CleanedUpProcessing += CleanedUpProcessing;
 		}
 
 		private static AnimatorGeneratorHook _animatorGeneratorHook;
@@ -17,11 +16,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			_animatorGeneratorHook = new AnimatorGeneratorHook();
 			_animatorGeneratorHook.OnPreprocessAvatar(avatarGameObject);
 		}
-
-		private static void CleanedUpProcessing(GameObject avatarGameObject) {
-			_animatorGeneratorHook.OnCleanedUpProcessAvatar(avatarGameObject);
-		}
-		
 		
 	}
 }

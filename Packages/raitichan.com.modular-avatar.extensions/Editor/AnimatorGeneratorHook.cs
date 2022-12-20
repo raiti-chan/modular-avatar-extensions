@@ -7,10 +7,8 @@ using UnityEngine;
 namespace raitichan.com.modular_avatar.extensions.Editor {
 	internal class AnimatorGeneratorHook {
 
-		private Dictionary<GameObject, bool> _generatorModuleObjectsEnableMap;
-
+		// ReSharper disable once MemberCanBeMadeStatic.Global
 		internal void OnPreprocessAvatar(GameObject avatarGameObject) {
-			this._generatorModuleObjectsEnableMap = new Dictionary<GameObject, bool>();
 			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true)
 				.Where(module => module.enabled)
 				.ToArray();
@@ -22,10 +20,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
 				RuntimeAnimatorController controller = generatorModule.GetFactory().CreateController(avatarGameObject);
 				GameObject targetObject = generatorModule.gameObject;
-				if (!this._generatorModuleObjectsEnableMap.ContainsKey(targetObject)) {
-					this._generatorModuleObjectsEnableMap[targetObject] = targetObject.activeSelf;
-				}
-				targetObject.SetActive(false);
 
 				ModularAvatarMergeAnimator mergeAnimator = targetObject.AddComponent<ModularAvatarMergeAnimator>();
 				mergeAnimator.animator = controller;
@@ -37,13 +31,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
 				generatorModule.GetFactory().PostProcess(avatarGameObject);
-			}
-		}
-
-		// ReSharper disable once UnusedParameter.Global
-		internal void OnCleanedUpProcessAvatar(GameObject avatarGameObject) {
-			foreach (KeyValuePair<GameObject, bool> keyValuePair in this._generatorModuleObjectsEnableMap.Where(keyValuePair => keyValuePair.Key != null)) {
-				keyValuePair.Key.SetActive(keyValuePair.Value);
 			}
 		}
 	}
