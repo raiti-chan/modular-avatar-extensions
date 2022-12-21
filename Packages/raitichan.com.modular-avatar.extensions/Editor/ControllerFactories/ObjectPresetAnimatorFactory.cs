@@ -3,12 +3,11 @@ using System.Linq;
 using nadena.dev.modular_avatar.core;
 using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
 using raitichan.com.modular_avatar.extensions.Modules;
+using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
-using static raitichan.com.modular_avatar.extensions.Modules.MAExObjectPresetAnimatorGenerator.PresetData;
-using static raitichan.com.modular_avatar.extensions.Modules.MAExObjectPresetAnimatorGenerator.PresetData.BlendShapeData;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
@@ -42,7 +41,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 					defaultWeightsDictionary[blendShapeData.skinnedMeshRenderer] = blendShapeIndexSet;
 				}
 
-				foreach (BlendShapeIndexAndWeight blendShapeIndexAndWeight in blendShapeData.BlendShapeIndexAndWeights) {
+				foreach (BlendShapeData.BlendShapeIndexAndWeight blendShapeIndexAndWeight in blendShapeData.BlendShapeIndexAndWeights) {
 					blendShapeIndexSet.Add(blendShapeIndexAndWeight.index);
 				}
 			}
@@ -61,7 +60,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 				foreach (KeyValuePair<SkinnedMeshRenderer, HashSet<int>> writeBlendShapeIndexSet in defaultWeightsDictionary) {
 					string path = MAExAnimatorFactoryUtils.GetBindingPath(writeBlendShapeIndexSet.Key.transform);
-					Dictionary<int, float> weightDictionary = this.Target.presetData[i].GetAllBlendShapeIndexAndWeight(writeBlendShapeIndexSet.Key);
+					Dictionary<int, float> weightDictionary =
+						BlendShapeData.GetWeightDictionary(this.Target.presetData[i].blendShapes, writeBlendShapeIndexSet.Key);
 					foreach (int blendShapeIndex in writeBlendShapeIndexSet.Value) {
 						string blendShapeName = $"blendShape.{writeBlendShapeIndexSet.Key.sharedMesh.GetBlendShapeName(blendShapeIndex)}";
 						AnimationCurve curve = new AnimationCurve();

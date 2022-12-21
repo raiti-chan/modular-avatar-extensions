@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
+using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Modules {
@@ -24,27 +25,6 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			public Texture2D menuIcon;
 			public List<GameObject> enableObjects;
 			public List<BlendShapeData> blendShapes;
-
-			public Dictionary<int, float>GetAllBlendShapeIndexAndWeight(SkinnedMeshRenderer skinnedMeshRenderer) {
-				return this.blendShapes
-					.Where(blendShapeData => blendShapeData.skinnedMeshRenderer == skinnedMeshRenderer)
-					.SelectMany(blendShapeData => blendShapeData.BlendShapeIndexAndWeights)
-					.GroupBy(blendShapeData => blendShapeData.index)
-					.ToDictionary(grouping => grouping.Key, grouping => grouping.Last().weight);
-			}
-
-			[Serializable]
-			public class BlendShapeData {
-				public SkinnedMeshRenderer skinnedMeshRenderer;
-				public List<BlendShapeIndexAndWeight> BlendShapeIndexAndWeights;
-
-				[Serializable]
-				public struct BlendShapeIndexAndWeight {
-					public int index;
-					public float weight;
-				}
-			}
-			
 		}
 
 	}

@@ -1,10 +1,12 @@
-﻿using nadena.dev.modular_avatar.core;
+﻿using System.Collections.Generic;
+using nadena.dev.modular_avatar.core;
 using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
+using static raitichan.com.modular_avatar.extensions.Serializable.BlendShapeData;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
@@ -21,17 +23,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			AnimationCurve offCurve = new AnimationCurve();
 			offCurve.AddKey(new Keyframe(0, 0));
 			offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
+			this.AddBlendShapeCurve(offClip, this.Target.isInvert);
 			AssetDatabase.AddObjectToAsset(offClip, controller);
 
 			AnimationClip onClip = new AnimationClip { name = $"{this.Target.parameterName}_ON" };
 			AnimationCurve onCurve = new AnimationCurve();
 			onCurve.AddKey(new Keyframe(0, 1));
 			onClip.SetCurve(path, typeof(GameObject), "m_IsActive", onCurve);
+			this.AddBlendShapeCurve(onClip, !this.Target.isInvert);
 			AssetDatabase.AddObjectToAsset(onClip, controller);
 
 
 			MAExAnimatorFactoryUtils.CreateToggleLayerToAnimatorController(controller, this.Target.parameterName, offClip, onClip, this.Target.isInvert);
 			return controller;
+		}
+
+		private void AddBlendShapeCurve(AnimationClip clip, bool isNotDefault) {
+			foreach (SkinnedMeshRenderer skinnedMeshRenderer in GetAllSkinnedMeshRenderer(this.Target.blendShapeDataList)) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(skinnedMeshRenderer.transform);
+				foreach (BlendShapeIndexAndWeight indexAndWight in GetAllIndexAndWights(this.Target.blendShapeDataList, skinnedMeshRenderer)) {
+					string blendShapeName = $"blendShape.{skinnedMeshRenderer.sharedMesh.GetBlendShapeName(indexAndWight.index)}";
+					AnimationCurve curve = new AnimationCurve();
+					curve.AddKey(new Keyframe(0, isNotDefault ? indexAndWight.weight : skinnedMeshRenderer.GetBlendShapeWeight(indexAndWight.index)));
+					clip.SetCurve(path, typeof(SkinnedMeshRenderer), blendShapeName, curve);
+				}
+			}
 		}
 
 		public void PostProcess(GameObject avatarGameObject) {

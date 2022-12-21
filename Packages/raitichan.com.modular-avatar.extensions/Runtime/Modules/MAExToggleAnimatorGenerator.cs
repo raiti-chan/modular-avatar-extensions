@@ -1,4 +1,6 @@
-﻿using nadena.dev.modular_avatar.core;
+﻿using System.Collections.Generic;
+using nadena.dev.modular_avatar.core;
+using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Modules {
@@ -14,5 +16,6 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 		public bool isInternal;
 		public bool saved;
 		public bool defaultValue;
+		public List<BlendShapeData> blendShapeDataList;
 	}
 }
