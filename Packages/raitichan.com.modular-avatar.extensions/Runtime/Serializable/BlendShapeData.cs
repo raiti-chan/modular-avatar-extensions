@@ -7,7 +7,7 @@ namespace raitichan.com.modular_avatar.extensions.Serializable {
 	[Serializable]
 	public class BlendShapeData {
 		public SkinnedMeshRenderer skinnedMeshRenderer;
-		public List<BlendShapeIndexAndWeight> BlendShapeIndexAndWeights;
+		public List<BlendShapeIndexAndWeight> blendShapeIndexAndWeights;
 
 		[Serializable]
 		public struct BlendShapeIndexAndWeight {
@@ -19,16 +19,16 @@ namespace raitichan.com.modular_avatar.extensions.Serializable {
 			SkinnedMeshRenderer skinnedMeshRenderer) {
 			return blendShapeDataList
 				.Where(blendShapeData => blendShapeData.skinnedMeshRenderer == skinnedMeshRenderer)
-				.SelectMany(blendShapeData => blendShapeData.BlendShapeIndexAndWeights)
+				.SelectMany(blendShapeData => blendShapeData.blendShapeIndexAndWeights)
 				.GroupBy(blendShapeData => blendShapeData.index)
 				.ToDictionary(grouping => grouping.Key, grouping => grouping.Last().weight);
 		}
 
-		public static IEnumerable<BlendShapeIndexAndWeight> GetAllIndexAndWights(IEnumerable<BlendShapeData> blendShapeDataList,
+		public static IEnumerable<BlendShapeIndexAndWeight> GetAllIndexAndWeight(IEnumerable<BlendShapeData> blendShapeDataList,
 			SkinnedMeshRenderer skinnedMeshRenderer) {
 			return blendShapeDataList
 				.Where(blendShapeData => blendShapeData.skinnedMeshRenderer == skinnedMeshRenderer)
-				.SelectMany(blendShapeData => blendShapeData.BlendShapeIndexAndWeights)
+				.SelectMany(blendShapeData => blendShapeData.blendShapeIndexAndWeights)
 				.GroupBy(blendShapeData => blendShapeData.index)
 				.Select(grouping => new BlendShapeIndexAndWeight { index = grouping.Key, weight = grouping.Last().weight });
 		}

@@ -1,19 +1,29 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using nadena.dev.modular_avatar.core;
 using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
 using raitichan.com.modular_avatar.extensions.Modules;
+using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 using VRC.SDK3.Avatars.ScriptableObjects;
-using static raitichan.com.modular_avatar.extensions.Serializable.BlendShapeData;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
 	public class ToggleAnimatorFactory : IRuntimeAnimatorFactory<MAExToggleAnimatorGenerator> {
 		public MAExToggleAnimatorGenerator Target { get; set; }
 
-		public void PreProcess(GameObject avatarGameObject) { }
+		private readonly List<BlendShapeData> _blendShapeData = new List<BlendShapeData>();
+
+		public void PreProcess(GameObject avatarGameObject) {
+			this._blendShapeData.Clear();
+			this._blendShapeData.AddRange(BlendShapeData.GetAllSkinnedMeshRenderer(this.Target.blendShapeDataList)
+				.Select(renderer => new BlendShapeData {
+					skinnedMeshRenderer = renderer,
+					blendShapeIndexAndWeights = BlendShapeData.GetAllIndexAndWeight(this.Target.blendShapeDataList, renderer).ToList()
+				}));
+		}
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
 			AnimatorController controller = UtilHelper.CreateAnimator();
@@ -23,28 +33,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			AnimationCurve offCurve = new AnimationCurve();
 			offCurve.AddKey(new Keyframe(0, 0));
 			offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
-			this.AddBlendShapeCurve(offClip, this.Target.isInvert);
+			this.AddBlendShapeCurve(offClip, this.Target.isInvert == this.Target.defaultValue);
 			AssetDatabase.AddObjectToAsset(offClip, controller);
 
 			AnimationClip onClip = new AnimationClip { name = $"{this.Target.parameterName}_ON" };
 			AnimationCurve onCurve = new AnimationCurve();
 			onCurve.AddKey(new Keyframe(0, 1));
 			onClip.SetCurve(path, typeof(GameObject), "m_IsActive", onCurve);
-			this.AddBlendShapeCurve(onClip, !this.Target.isInvert);
+			this.AddBlendShapeCurve(onClip, this.Target.isInvert != this.Target.defaultValue);
 			AssetDatabase.AddObjectToAsset(onClip, controller);
 
 
-			MAExAnimatorFactoryUtils.CreateToggleLayerToAnimatorController(controller, this.Target.parameterName, offClip, onClip, this.Target.isInvert);
+			MAExAnimatorFactoryUtils.CreateToggleLayerToAnimatorController(controller, this.Target.parameterName, offClip, onClip, this.Target.isInvert,
+				this.Target.defaultValue);
+
 			return controller;
 		}
 
-		private void AddBlendShapeCurve(AnimationClip clip, bool isNotDefault) {
-			foreach (SkinnedMeshRenderer skinnedMeshRenderer in GetAllSkinnedMeshRenderer(this.Target.blendShapeDataList)) {
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(skinnedMeshRenderer.transform);
-				foreach (BlendShapeIndexAndWeight indexAndWight in GetAllIndexAndWights(this.Target.blendShapeDataList, skinnedMeshRenderer)) {
-					string blendShapeName = $"blendShape.{skinnedMeshRenderer.sharedMesh.GetBlendShapeName(indexAndWight.index)}";
+		private void AddBlendShapeCurve(AnimationClip clip, bool isDefault) {
+			foreach (BlendShapeData blendShapeData in this._blendShapeData) {
+				SkinnedMeshRenderer renderer = blendShapeData.skinnedMeshRenderer;
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(renderer.transform);
+				foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWight in blendShapeData.blendShapeIndexAndWeights) {
+					string blendShapeName = $"blendShape.{renderer.sharedMesh.GetBlendShapeName(indexAndWight.index)}";
 					AnimationCurve curve = new AnimationCurve();
-					curve.AddKey(new Keyframe(0, isNotDefault ? indexAndWight.weight : skinnedMeshRenderer.GetBlendShapeWeight(indexAndWight.index)));
+					curve.AddKey(new Keyframe(0, isDefault ? renderer.GetBlendShapeWeight(indexAndWight.index) : indexAndWight.weight));
 					clip.SetCurve(path, typeof(SkinnedMeshRenderer), blendShapeName, curve);
 				}
 			}
@@ -72,6 +85,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				saved = this.Target.saved,
 				defaultValue = this.Target.defaultValue ? 1 : 0
 			});
+
+			// デフォルトの状態に設定(Animatorをブロックされている際にもデフォルト状態で表示されるように)
+			// オブジェクト
+			targetObject.SetActive(this.Target.isInvert != this.Target.defaultValue);
+
+			// ブレンドシェイプは、現在の状態をデフォルトとするのでいらない
 		}
 	}
 }

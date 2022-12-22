@@ -22,51 +22,63 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 		public MAExObjectPresetAnimatorGenerator Target { get; set; }
 
-		public void PreProcess(GameObject avatarGameObject) { }
+		private readonly HashSet<GameObject> _presetObjects = new HashSet<GameObject>();
+		private readonly Dictionary<SkinnedMeshRenderer, HashSet<int>> _usedBlendShapeIndexesDictionary = new Dictionary<SkinnedMeshRenderer, HashSet<int>>();
+
+		public void PreProcess(GameObject avatarGameObject) {
+			// オンオフの切り替わるオブジェクト一覧の取得
+			this._presetObjects.Clear();
+			IEnumerable<GameObject> presetObjects = this.Target.presetData.SelectMany(presetData => presetData.enableObjects);
+			foreach (GameObject enableObject in presetObjects.Where(obj => obj != null)) {
+				this._presetObjects.Add(enableObject);
+			}
+
+			// デフォルトのブレンドシェイプを使用するシェイプキーのindexの取得
+			this._usedBlendShapeIndexesDictionary.Clear();
+			IEnumerable<BlendShapeData> presetBlendShapes = this.Target.presetData.SelectMany(presetData => presetData.blendShapes);
+			IEnumerable<BlendShapeData> toggleBlendShapes = this.Target.toggleSetData.SelectMany(toggleSetData => toggleSetData.blendShapes);
+			foreach (BlendShapeData blendShapeData in presetBlendShapes.Concat(toggleBlendShapes).Where(data => data.skinnedMeshRenderer != null)) {
+				if (!this._usedBlendShapeIndexesDictionary.TryGetValue(blendShapeData.skinnedMeshRenderer, out HashSet<int> blendShapeIndexSet)) {
+					blendShapeIndexSet = new HashSet<int>();
+					this._usedBlendShapeIndexesDictionary[blendShapeData.skinnedMeshRenderer] = blendShapeIndexSet;
+				}
+
+				foreach (BlendShapeData.BlendShapeIndexAndWeight blendShapeIndexAndWeight in blendShapeData.blendShapeIndexAndWeights) {
+					blendShapeIndexSet.Add(blendShapeIndexAndWeight.index);
+				}
+			}
+		}
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
 			AnimatorController controller = UtilHelper.CreateAnimator();
 
-			AnimationClip[] clips = new AnimationClip[this.Target.presetData.Count];
-			HashSet<GameObject> allEnableObjectSet = new HashSet<GameObject>();
-			foreach (GameObject enableObject in this.Target.presetData.SelectMany(presetData => presetData.enableObjects)) {
-				allEnableObjectSet.Add(enableObject);
-			}
 
-			Dictionary<SkinnedMeshRenderer, HashSet<int>> defaultWeightsDictionary = new Dictionary<SkinnedMeshRenderer, HashSet<int>>();
-			foreach (BlendShapeData blendShapeData in this.Target.presetData.SelectMany(presetData => presetData.blendShapes)) {
-				if (blendShapeData.skinnedMeshRenderer == null) continue;
-				if (!defaultWeightsDictionary.TryGetValue(blendShapeData.skinnedMeshRenderer, out HashSet<int> blendShapeIndexSet)) {
-					blendShapeIndexSet = new HashSet<int>();
-					defaultWeightsDictionary[blendShapeData.skinnedMeshRenderer] = blendShapeIndexSet;
-				}
-
-				foreach (BlendShapeData.BlendShapeIndexAndWeight blendShapeIndexAndWeight in blendShapeData.BlendShapeIndexAndWeights) {
-					blendShapeIndexSet.Add(blendShapeIndexAndWeight.index);
-				}
-			}
-
-
-			for (int i = 0; i < clips.Length; i++) {
-				AnimationClip clip = new AnimationClip() {
+			// プリセットアニメーションの生成
+			AnimationClip[] presetClips = new AnimationClip[this.Target.presetData.Count];
+			for (int i = 0; i < presetClips.Length; i++) {
+				AnimationClip clip = new AnimationClip {
 					name = this.Target.presetData[i].displayName
 				};
-				foreach (GameObject allObject in allEnableObjectSet) {
-					string path = MAExAnimatorFactoryUtils.GetBindingPath(allObject.transform);
+
+				// オブジェクトon/offアニメーションの生成
+				foreach (GameObject usedObject in this._presetObjects) {
+					string path = MAExAnimatorFactoryUtils.GetBindingPath(usedObject.transform);
 					AnimationCurve curve = new AnimationCurve();
-					curve.AddKey(new Keyframe(0, this.Target.presetData[i].enableObjects.Contains(allObject) ? 1 : 0));
+					curve.AddKey(new Keyframe(0, this.Target.presetData[i].enableObjects.Contains(usedObject) ? 1 : 0));
 					clip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
 				}
 
-				foreach (KeyValuePair<SkinnedMeshRenderer, HashSet<int>> writeBlendShapeIndexSet in defaultWeightsDictionary) {
-					string path = MAExAnimatorFactoryUtils.GetBindingPath(writeBlendShapeIndexSet.Key.transform);
+				// ブレンドシェイプアニメーションの生成
+				foreach (KeyValuePair<SkinnedMeshRenderer, HashSet<int>> writeBlendShapeIndexSet in this._usedBlendShapeIndexesDictionary) {
+					SkinnedMeshRenderer renderer = writeBlendShapeIndexSet.Key;
+					string path = MAExAnimatorFactoryUtils.GetBindingPath(renderer.transform);
 					Dictionary<int, float> weightDictionary =
-						BlendShapeData.GetWeightDictionary(this.Target.presetData[i].blendShapes, writeBlendShapeIndexSet.Key);
+						BlendShapeData.GetWeightDictionary(this.Target.presetData[i].blendShapes, renderer);
 					foreach (int blendShapeIndex in writeBlendShapeIndexSet.Value) {
-						string blendShapeName = $"blendShape.{writeBlendShapeIndexSet.Key.sharedMesh.GetBlendShapeName(blendShapeIndex)}";
+						string blendShapeName = $"blendShape.{renderer.sharedMesh.GetBlendShapeName(blendShapeIndex)}";
 						AnimationCurve curve = new AnimationCurve();
 						if (!weightDictionary.TryGetValue(blendShapeIndex, out float weight)) {
-							weight = writeBlendShapeIndexSet.Key.GetBlendShapeWeight(blendShapeIndex);
+							weight = renderer.GetBlendShapeWeight(blendShapeIndex);
 						}
 
 						curve.AddKey(new Keyframe(0, weight));
@@ -75,10 +87,53 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				}
 
 				AssetDatabase.AddObjectToAsset(clip, controller);
-				clips[i] = clip;
+				presetClips[i] = clip;
 			}
 
-			MAExAnimatorFactoryUtils.CreateSelectStateLayerToAnimatorController(controller, this.Target.parameterName, clips);
+			MAExAnimatorFactoryUtils.CreateSelectStateLayerToAnimatorController(controller, this.Target.parameterName, presetClips);
+
+			// トグルアニメーションの生成
+			AnimationClip[] toggleClips = new AnimationClip[this.Target.toggleSetData.Count];
+			for (int i = 0; i < toggleClips.Length; i++) {
+				MAExObjectPresetAnimatorGenerator.ToggleSetData toggleSetData = this.Target.toggleSetData[i];
+				AnimationClip offClip = new AnimationClip {
+					name = $"{toggleSetData.displayName}_OFF"
+				};
+				AnimationClip onClip = null;
+
+				// オブジェクトoffアニメーションの生成
+				foreach (GameObject toggleObject in toggleSetData.toggleObjects) {
+					string path = MAExAnimatorFactoryUtils.GetBindingPath(toggleObject.transform);
+					AnimationCurve offCurve = new AnimationCurve();
+					offCurve.AddKey(new Keyframe(0, 0));
+					offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
+					if (this._presetObjects.Contains(toggleObject)) continue;
+					// プリセットオブジェクトに含まれないオブジェクトがあった場合onアニメーションを生成する
+					if (onClip == null) onClip = new AnimationClip() { name = $"{toggleSetData.displayName}_ON" };
+					AnimationCurve onCurve = new AnimationCurve();
+					onCurve.AddKey(new Keyframe(0, 1));
+					onClip.SetCurve(path, typeof(GameObject), "m_IsActive", onCurve);
+				}
+
+				// ブレンドシェイプアニメーションの生成
+				foreach (SkinnedMeshRenderer renderer in BlendShapeData.GetAllSkinnedMeshRenderer(toggleSetData.blendShapes)) {
+					string path = MAExAnimatorFactoryUtils.GetBindingPath(renderer.transform);
+					foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWeight in
+					         BlendShapeData.GetAllIndexAndWeight(toggleSetData.blendShapes, renderer)) {
+						string blendShapeName = $"blendShape.{renderer.sharedMesh.GetBlendShapeName(indexAndWeight.index)}";
+						AnimationCurve curve = new AnimationCurve();
+						curve.AddKey(new Keyframe(0, indexAndWeight.weight));
+						offClip.SetCurve(path, typeof(SkinnedMeshRenderer), blendShapeName, curve);
+					}
+				}
+
+				AssetDatabase.AddObjectToAsset(offClip, controller);
+				toggleClips[i] = offClip;
+
+				MAExAnimatorFactoryUtils.CreateToggleLayerToAnimatorController(controller, toggleSetData.parameterName, offClip, onClip,
+					this.Target.isToggleInvert, toggleSetData.defaultValue);
+			}
+
 
 			return controller;
 		}
@@ -96,6 +151,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				subMenu = CreatePageMenu(expressionsMenu)
 			});
 
+			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
+				name = "衣装ON/OFF",
+				icon = _folderIcon,
+				type = VRCExpressionsMenu.Control.ControlType.SubMenu,
+				subMenu = CreateToggleMenu(expressionsMenu)
+			});
+
 			menuInstaller.menuToAppend = expressionsMenu;
 
 			ModularAvatarParameters parameters = targetObject.GetComponent<ModularAvatarParameters>();
@@ -105,8 +167,51 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				isPrefix = false,
 				syncType = ParameterSyncType.Int,
 				saved = this.Target.saved,
-				defaultValue = 0
+				defaultValue = this.Target.defaultPreset
 			});
+
+			foreach (MAExObjectPresetAnimatorGenerator.ToggleSetData toggleSetData in this.Target.toggleSetData) {
+				parameters.parameters.Add(new ParameterConfig {
+					nameOrPrefix = toggleSetData.parameterName,
+					internalParameter = toggleSetData.isInternal,
+					isPrefix = false,
+					syncType = ParameterSyncType.Bool,
+					saved = toggleSetData.saved,
+					defaultValue = toggleSetData.defaultValue ? 1 : 0
+				});
+			}
+
+			// デフォルトの状態に設定(Animatorをブロックされている際にもデフォルト状態で表示されるように)
+			// プリセット
+			// オブジェクト
+			MAExObjectPresetAnimatorGenerator.PresetData defaultPreset = this.Target.presetData[this.Target.defaultPreset];
+			foreach (GameObject usedObject in this._presetObjects) {
+				usedObject.SetActive(defaultPreset.enableObjects.Contains(usedObject));
+			}
+
+			// ブレンドシェイプ
+			foreach (SkinnedMeshRenderer renderer in BlendShapeData.GetAllSkinnedMeshRenderer(defaultPreset.blendShapes)) {
+				foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWeight in BlendShapeData.GetAllIndexAndWeight(defaultPreset.blendShapes, renderer)) {
+					renderer.SetBlendShapeWeight(indexAndWeight.index, indexAndWeight.weight);
+				}
+			}
+
+			// トグル
+			foreach (MAExObjectPresetAnimatorGenerator.ToggleSetData toggleSetData in
+			         this.Target.toggleSetData.Where(data => this.Target.isToggleInvert == data.defaultValue)) {
+				// オブジェクト
+				foreach (GameObject toggleObject in toggleSetData.toggleObjects) {
+					toggleObject.SetActive(false);
+				}
+
+				// ブレンドシェイプ
+				foreach (SkinnedMeshRenderer renderer in BlendShapeData.GetAllSkinnedMeshRenderer(toggleSetData.blendShapes)) {
+					foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWeight in
+					         BlendShapeData.GetAllIndexAndWeight(toggleSetData.blendShapes, renderer)) {
+						renderer.SetBlendShapeWeight(indexAndWeight.index, indexAndWeight.weight);
+					}
+				}
+			}
 		}
 
 		private VRCExpressionsMenu CreatePageMenu(VRCExpressionsMenu parent) {
@@ -165,6 +270,42 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			}
 
 			return selectMenu;
+		}
+
+		private VRCExpressionsMenu CreateToggleMenu(VRCExpressionsMenu parent) {
+			VRCExpressionsMenu toggleMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
+			toggleMenu.name = $"toggleMenu";
+			AssetDatabase.AddObjectToAsset(toggleMenu, parent);
+
+			VRCExpressionsMenu currentMenu = toggleMenu;
+			int remainingToggleCount = this.Target.toggleSetData.Count;
+			int pageCount = 0;
+			foreach (MAExObjectPresetAnimatorGenerator.ToggleSetData toggleSetData in this.Target.toggleSetData) {
+				currentMenu.controls.Add(new VRCExpressionsMenu.Control {
+					name = toggleSetData.displayName,
+					icon = toggleSetData.menuIcon,
+					type = VRCExpressionsMenu.Control.ControlType.Toggle,
+					parameter = new VRCExpressionsMenu.Control.Parameter { name = toggleSetData.parameterName }
+				});
+				remainingToggleCount--;
+
+				if (currentMenu.controls.Count < 7) continue;
+				if (remainingToggleCount <= 1) continue;
+
+				VRCExpressionsMenu nextMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
+				nextMenu.name = $"toggleMenu_{pageCount}";
+				currentMenu.controls.Add(new VRCExpressionsMenu.Control {
+					name = "次へ",
+					icon = _moreIcon,
+					type = VRCExpressionsMenu.Control.ControlType.SubMenu,
+					subMenu = nextMenu
+				});
+				pageCount++;
+				AssetDatabase.AddObjectToAsset(nextMenu, parent);
+				currentMenu = nextMenu;
+			}
+
+			return toggleMenu;
 		}
 	}
 }

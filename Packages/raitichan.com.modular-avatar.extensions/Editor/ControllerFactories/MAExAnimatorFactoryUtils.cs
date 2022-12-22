@@ -8,7 +8,10 @@ using VRC.SDK3.Avatars.Components;
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	public static class MAExAnimatorFactoryUtils {
 		public static AnimatorControllerLayer CreateToggleLayerToAnimatorController(AnimatorController controller, string parameterName,
-			AnimationClip offClip, AnimationClip onClip, bool isInvert = false) {
+			AnimationClip offClip, AnimationClip onClip, bool isInvert = false, bool defaultValue = false) {
+			if (offClip == null) offClip = GetEmptyAnimationClip();
+			if (onClip == null) onClip = GetEmptyAnimationClip();
+			
 			AnimatorStateMachine stateMachine = new AnimatorStateMachine() {
 				name = $"{parameterName}_Toggle"
 			};
@@ -22,7 +25,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			onState.writeDefaultValues = false;
 			AssetDatabase.AddObjectToAsset(onState, controller);
 
-			stateMachine.defaultState = isInvert == false ? offState : onState;
+			stateMachine.defaultState = isInvert == defaultValue ? offState : onState;
 
 			AnimatorStateTransition offToOn = offState.AddTransition(onState);
 			offToOn.hasExitTime = false;
