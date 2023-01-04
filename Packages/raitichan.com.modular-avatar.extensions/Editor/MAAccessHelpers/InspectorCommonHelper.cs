@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 using Object = UnityEngine.Object;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
@@ -27,7 +28,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 				type.GetMethod(DISPLAY_OUT_OF_AVATAR_WARNING_METHOD_NAME, BindingFlags.Static | BindingFlags.NonPublic);
 			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {DISPLAY_OUT_OF_AVATAR_WARNING_METHOD_NAME}");
 
-			_displayOutOfAvatarWarningFunction = ExpressionTreeUtils.CreateMethodCallAction<Object[]>(methodInfo);
+			_displayOutOfAvatarWarningFunction = ExpressionTreeUtils.CreateStaticMethodCallAction<Object[]>(methodInfo);
 			_displayOutOfAvatarWarningFunction.Invoke(targets);
 		}
 	}

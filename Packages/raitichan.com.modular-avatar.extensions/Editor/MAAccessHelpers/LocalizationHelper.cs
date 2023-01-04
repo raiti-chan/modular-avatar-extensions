@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 	public static class LocalizationHelper {
@@ -31,7 +32,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 			MethodInfo methodInfo = _Type.GetMethod(GET_SELECTED_LOCALIZATION_METHOD_NAME, BindingFlags.Static | BindingFlags.Public);
 			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {SHOW_LANGUAGE_UI_METHOD_NAME}");
 
-			_getSelectedLocalizationFunction = ExpressionTreeUtils.CreateMethodCallFunction<string>(methodInfo);
+			_getSelectedLocalizationFunction = ExpressionTreeUtils.CreateStaticMethodCallFunction<string>(methodInfo);
 			return _getSelectedLocalizationFunction.Invoke();
 		}
 
@@ -47,7 +48,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 			MethodInfo methodInfo = _Type.GetMethod(SHOW_LANGUAGE_UI_METHOD_NAME, BindingFlags.Static | BindingFlags.Public);
 			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {SHOW_LANGUAGE_UI_METHOD_NAME}");
 
-			_showLanguageUiFunction = ExpressionTreeUtils.CreateMethodCallAction(methodInfo);
+			_showLanguageUiFunction = ExpressionTreeUtils.CreateStaticMethodCallAction(methodInfo);
 			_showLanguageUiFunction.Invoke();
 		}
 	}

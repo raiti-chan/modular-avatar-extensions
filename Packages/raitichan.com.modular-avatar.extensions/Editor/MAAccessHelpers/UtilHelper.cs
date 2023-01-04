@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 using UnityEditor.Animations;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
@@ -29,7 +30,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 
 			MethodInfo methodInfo = _Type.GetMethod(GENERATE_ASSET_PATH_METHOD_NAME, BindingFlags.Static | BindingFlags.Public);
 			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {GENERATE_ASSET_PATH_METHOD_NAME}");
-			_generateAssetPathFunction = ExpressionTreeUtils.CreateMethodCallFunction<string>(methodInfo);
+			_generateAssetPathFunction = ExpressionTreeUtils.CreateStaticMethodCallFunction<string>(methodInfo);
 			return _generateAssetPathFunction.Invoke();
 		}
 
@@ -44,7 +45,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 
 			MethodInfo methodInfo = _Type.GetMethod(CREATE_ANIMATOR_METHOD_NAME, BindingFlags.Static | BindingFlags.Public);
 			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {CREATE_ANIMATOR_METHOD_NAME}");
-			_createAnimatorFunction = ExpressionTreeUtils.CreateMethodCallFunction<AnimatorController, AnimatorController>(methodInfo);
+			_createAnimatorFunction = ExpressionTreeUtils.CreateStaticMethodCallFunction<AnimatorController, AnimatorController>(methodInfo);
 			return _createAnimatorFunction.Invoke(toClone);
 		}
 	}
