@@ -33,20 +33,5 @@ namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
 			_generateAssetPathFunction = ExpressionTreeUtils.CreateStaticMethodCallFunction<string>(methodInfo);
 			return _generateAssetPathFunction.Invoke();
 		}
-
-
-		private const string CREATE_ANIMATOR_METHOD_NAME = "CreateAnimator";
-		private static Func<AnimatorController, AnimatorController> _createAnimatorFunction;
-
-		public static AnimatorController CreateAnimator(AnimatorController toClone = null) {
-			if (_createAnimatorFunction != null) {
-				return _createAnimatorFunction.Invoke(toClone);
-			}
-
-			MethodInfo methodInfo = _Type.GetMethod(CREATE_ANIMATOR_METHOD_NAME, BindingFlags.Static | BindingFlags.Public);
-			if (methodInfo == null) throw new NullReferenceException($"NotFound Method : {CREATE_ANIMATOR_METHOD_NAME}");
-			_createAnimatorFunction = ExpressionTreeUtils.CreateStaticMethodCallFunction<AnimatorController, AnimatorController>(methodInfo);
-			return _createAnimatorFunction.Invoke(toClone);
-		}
 	}
 }

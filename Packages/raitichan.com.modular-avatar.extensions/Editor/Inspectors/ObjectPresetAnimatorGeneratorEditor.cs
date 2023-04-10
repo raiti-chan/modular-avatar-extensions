@@ -821,10 +821,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 				this._indexAndWeightReorderableList.serializedProperty =
 					this._currentBlendShapeProperty.FindPropertyRelative(nameof(BlendShapeData.blendShapeIndexAndWeights));
 			}
-
-			GUILayout.Label(this._target.presetData[this._SelectedDataIndex].blendShapes[this._SelectedBlendShapeIndex].skinnedMeshRenderer == null
+			
+			GUILayout.Label(this._target.toggleSetData[this._SelectedDataIndex].blendShapes[this._SelectedBlendShapeIndex].skinnedMeshRenderer == null
 				? "None Skinned Mesh Renderer"
-				: this._target.presetData[this._SelectedDataIndex].blendShapes[this._SelectedBlendShapeIndex].skinnedMeshRenderer.name);
+				: this._target.toggleSetData[this._SelectedDataIndex].blendShapes[this._SelectedBlendShapeIndex].skinnedMeshRenderer.name);
 
 			this._indexAndWeightReorderableList.DoLayoutList();
 

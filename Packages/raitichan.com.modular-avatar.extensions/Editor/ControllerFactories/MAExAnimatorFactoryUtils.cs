@@ -140,12 +140,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 			return layer;
 		}
-
+		
 
 		// TODO: 将来的にアニメーション生成支援ライブラリの方へ移動
-		public static string GetBindingPath(Transform ear) {
+		public static string GetBindingPath(Transform target) {
 			Stack<Transform> pathStack = new Stack<Transform>();
-			Transform current = ear;
+			Transform current = target;
 			while (current.GetComponent<VRCAvatarDescriptor>() == null) {
 				pathStack.Push(current);
 				current = current.parent;

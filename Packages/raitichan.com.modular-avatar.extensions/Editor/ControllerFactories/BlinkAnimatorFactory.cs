@@ -1,5 +1,4 @@
-﻿using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
-using raitichan.com.modular_avatar.extensions.Modules;
+﻿using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
@@ -12,8 +11,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		public void PreProcess(GameObject avatarGameObject) { }
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = UtilHelper.CreateAnimator();
+			AnimatorController controller = MAExUtils.CreateAnimator();
 			AnimationClip clip = this.CreateClip();
+			AssetDatabase.AddObjectToAsset(clip, controller);
 			MAExAnimatorFactoryUtils.CreateIdleLayerToAnimatorController(controller, "BlinkAnimation", clip, "Blink Idle");
 
 			return controller;

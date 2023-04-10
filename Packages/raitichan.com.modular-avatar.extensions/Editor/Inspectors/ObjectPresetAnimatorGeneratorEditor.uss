@@ -1,3 +1,3 @@
 Button.selected-inspector-mode {
-    background-color: rgba(55, 55, 55, 255);
+    background-color: rgba(130, 130, 130, 255);
 }

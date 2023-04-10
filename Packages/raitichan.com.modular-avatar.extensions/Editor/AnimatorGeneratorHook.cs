@@ -8,7 +8,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 	internal class AnimatorGeneratorHook {
 
 		// ReSharper disable once MemberCanBeMadeStatic.Global
-		internal void OnPreprocessAvatar(GameObject avatarGameObject) {
+		internal void OnProcessAvatar(GameObject avatarGameObject) {
 			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true)
 				.Where(module => module.enabled)
 				.ToArray();
@@ -31,6 +31,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
 				generatorModule.GetFactory().PostProcess(avatarGameObject);
+				Object.DestroyImmediate(generatorModule);
 			}
 		}
 	}

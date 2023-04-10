@@ -10,11 +10,16 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			AvatarProcessor.BeforeProcessing += ProcessAvatar;
 		}
 
+		private static MeshRendererOverrideHook _meshRendererOverrideHook;
 		private static AnimatorGeneratorHook _animatorGeneratorHook;
 
 		private static void ProcessAvatar(GameObject avatarGameObject) {
+
+			_meshRendererOverrideHook = new MeshRendererOverrideHook();
+			_meshRendererOverrideHook.OnProcessAvatar(avatarGameObject);
+			
 			_animatorGeneratorHook = new AnimatorGeneratorHook();
-			_animatorGeneratorHook.OnPreprocessAvatar(avatarGameObject);
+			_animatorGeneratorHook.OnProcessAvatar(avatarGameObject);
 		}
 		
 	}

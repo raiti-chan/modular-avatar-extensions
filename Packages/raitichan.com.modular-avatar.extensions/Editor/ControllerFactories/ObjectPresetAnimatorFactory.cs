@@ -50,7 +50,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		}
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = UtilHelper.CreateAnimator();
+			AnimatorController controller = MAExUtils.CreateAnimator();
 
 
 			// プリセットアニメーションの生成
@@ -63,6 +63,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				// オブジェクトon/offアニメーションの生成
 				foreach (GameObject usedObject in this._presetObjects) {
 					string path = MAExAnimatorFactoryUtils.GetBindingPath(usedObject.transform);
+					if (usedObject.GetComponent<ModularAvatarBoneProxy>() is ModularAvatarBoneProxy boneProxy) {
+						// BoneProxyがあった場合BoneProxyの参照先をパスにする
+						// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+						if (boneProxy.target != null) {
+							path = $"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{usedObject.name}";
+						}
+					}
 					AnimationCurve curve = new AnimationCurve();
 					curve.AddKey(new Keyframe(0, this.Target.presetData[i].enableObjects.Contains(usedObject) ? 1 : 0));
 					clip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
@@ -104,6 +111,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				// オブジェクトoffアニメーションの生成
 				foreach (GameObject toggleObject in toggleSetData.toggleObjects) {
 					string path = MAExAnimatorFactoryUtils.GetBindingPath(toggleObject.transform);
+					if (toggleObject.GetComponent<ModularAvatarBoneProxy>() is ModularAvatarBoneProxy boneProxy) {
+						// BoneProxyがあった場合BoneProxyの参照先をパスにする
+						// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+						if (boneProxy.target != null) {
+							path = $"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{toggleObject.name}";
+						}
+					}
 					AnimationCurve offCurve = new AnimationCurve();
 					offCurve.AddKey(new Keyframe(0, 0));
 					offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
@@ -128,6 +142,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				}
 
 				AssetDatabase.AddObjectToAsset(offClip, controller);
+				if (onClip != null) AssetDatabase.AddObjectToAsset(onClip, controller);
 				toggleClips[i] = offClip;
 
 				MAExAnimatorFactoryUtils.CreateToggleLayerToAnimatorController(controller, toggleSetData.parameterName, offClip, onClip,
@@ -151,12 +166,14 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				subMenu = CreatePageMenu(expressionsMenu)
 			});
 
-			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
-				name = "衣装ON/OFF",
-				icon = _folderIcon,
-				type = VRCExpressionsMenu.Control.ControlType.SubMenu,
-				subMenu = CreateToggleMenu(expressionsMenu)
-			});
+			if (this.Target.toggleSetData.Count != 0) {
+				expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
+					name = "衣装ON/OFF",
+					icon = _folderIcon,
+					type = VRCExpressionsMenu.Control.ControlType.SubMenu,
+					subMenu = CreateToggleMenu(expressionsMenu)
+				});
+			}
 
 			menuInstaller.menuToAppend = expressionsMenu;
 

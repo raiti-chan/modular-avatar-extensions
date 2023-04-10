@@ -26,8 +26,15 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		}
 
 		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = UtilHelper.CreateAnimator();
+			AnimatorController controller = MAExUtils.CreateAnimator();
 			string path = MAExAnimatorFactoryUtils.GetBindingPath(this.Target.transform);
+			if (this.Target.GetComponent<ModularAvatarBoneProxy>() is ModularAvatarBoneProxy boneProxy) {
+				// BoneProxyがあった場合BoneProxyの参照先をパスにする
+				// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+				if (boneProxy.target != null) {
+					path = $"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{Target.name}";
+				}
+			}
 
 			AnimationClip offClip = new AnimationClip { name = $"{this.Target.parameterName}_OFF" };
 			AnimationCurve offCurve = new AnimationCurve();
