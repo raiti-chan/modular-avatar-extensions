@@ -5,6 +5,7 @@ using nadena.dev.modular_avatar.core;
 using raitichan.com.modular_avatar.extensions.Editor.ModuleExtensions;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Editor.Views;
+using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.ScriptableObjects;
 using UnityEditor;

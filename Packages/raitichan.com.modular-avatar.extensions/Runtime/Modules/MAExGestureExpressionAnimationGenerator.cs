@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using nadena.dev.modular_avatar.core;
+using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.ScriptableObjects;
 using UnityEngine;
 
@@ -116,21 +117,6 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 		public struct BlendShapeWeight {
 			public bool enable;
 			public float weight;
-		}
-
-		public enum LeftAndRight {
-			Left,
-			Right
-		}
-
-		public enum Gesture {
-			Fist,
-			HandOpen,
-			FingerPoint,
-			Victory,
-			RockNRoll,
-			HandGun,
-			ThumbsUp
 		}
 	}
 }

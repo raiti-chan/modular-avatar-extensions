@@ -2,6 +2,7 @@
 using System.Text;
 using System.Text.RegularExpressions;
 using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
+using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEngine;

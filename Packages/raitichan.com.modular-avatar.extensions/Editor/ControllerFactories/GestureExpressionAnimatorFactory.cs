@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using raitichan.com.modular_avatar.extensions.Editor.ModuleExtensions;
+using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
