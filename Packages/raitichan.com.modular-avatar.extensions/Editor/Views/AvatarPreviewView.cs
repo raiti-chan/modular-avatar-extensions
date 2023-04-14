@@ -148,7 +148,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._camera.scene = this._scene;
 			this._camera.enabled = false;
 			this._camera.nearClipPlane = 0.01f;
-			this._camera.clearFlags = CameraClearFlags.SolidColor;
+			this._camera.clearFlags = CameraClearFlags.Depth;
 			this._camera.backgroundColor = Color.gray;
 			return cameraObj;
 		}
@@ -156,11 +156,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 		private GameObject CreateLightObj() {
 			GameObject lightObj = new GameObject("Directional Light", typeof(Light)) {
 				transform = {
-					rotation = Quaternion.Euler(50, -10, 0)
+					rotation = Quaternion.Euler(50, -30, 0)
 				}
 			};
 			this._light = lightObj.GetComponent<Light>();
 			this._light.type = LightType.Directional;
+			this._light.color = new Color(0xFF, 0xF4, 0xD6);
 			return lightObj;
 		}
 
