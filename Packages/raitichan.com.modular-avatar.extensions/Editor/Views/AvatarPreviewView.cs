@@ -10,6 +10,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 	public class AvatarPreviewView : IDisposable {
 		private readonly Scene _scene;
 		private RenderTexture _renderTexture;
+		private Material _material;
 
 		private readonly GameObject _cameraObj;
 		private readonly GameObject _lightObj;
@@ -25,6 +26,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 
 		public AvatarPreviewView(VRCAvatarDescriptor descriptor) {
 			this._scene = EditorSceneManager.NewPreviewScene();
+			this._material = CreateMaterial();
 
 			this._cameraObj = this.CreateCameraObject();
 			this.AddGameObject(this._cameraObj);
@@ -87,7 +89,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._camera.Render();
 			Unsupported.useScriptableRenderPipeline = oldAllowPipes;
 
-			Graphics.DrawTexture(rect, this._renderTexture);
+			Graphics.DrawTexture(rect, this._renderTexture, this._material);
 			return false;
 		}
 
@@ -138,6 +140,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			transform.rotation = Quaternion.Euler(rotation);
 		}
 
+		private static Material CreateMaterial() {
+			string shaderPath = AssetDatabase.GUIDToAssetPath("9ae45f1dd56abb14c856fd981d74791f");
+			Shader previewShader = AssetDatabase.LoadAssetAtPath<Shader>(shaderPath);
+			return new Material(previewShader);
+		}
+
 		private GameObject CreateCameraObject() {
 			GameObject cameraObj = new GameObject("Camera", typeof(Camera));
 			this._camera = cameraObj.GetComponent<Camera>();
@@ -148,7 +156,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._camera.scene = this._scene;
 			this._camera.enabled = false;
 			this._camera.nearClipPlane = 0.01f;
-			this._camera.clearFlags = CameraClearFlags.Depth;
+			this._camera.clearFlags = CameraClearFlags.SolidColor;
 			this._camera.backgroundColor = Color.gray;
 			return cameraObj;
 		}
@@ -161,7 +169,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			};
 			this._light = lightObj.GetComponent<Light>();
 			this._light.type = LightType.Directional;
-			this._light.color = new Color(0xFF, 0xF4, 0xD6);
 			return lightObj;
 		}
 
