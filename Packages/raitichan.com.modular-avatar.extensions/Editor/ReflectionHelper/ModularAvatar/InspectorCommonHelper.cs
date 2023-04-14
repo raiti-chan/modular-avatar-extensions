@@ -1,10 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
-using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 using Object = UnityEngine.Object;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
+namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar {
 	public static class InspectorCommonHelper {
 		private const string ASSEMBLY_NAME = "nadena.dev.modular-avatar.core.editor";
 		private const string NAMESPACE = "nadena.dev.modular_avatar.core.editor";

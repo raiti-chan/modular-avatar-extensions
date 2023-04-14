@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Reflection;
-using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
-using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers {
+namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar {
 	public static class LocalizationHelper {
 		private const string ASSEMBLY_NAME = "nadena.dev.modular-avatar.core.editor";
 		private const string NAMESPACE = "nadena.dev.modular_avatar.core.editor";

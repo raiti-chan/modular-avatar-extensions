@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
-using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEditor;

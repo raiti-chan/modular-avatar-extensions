@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Reflection;
-using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper;
 using UnityEditor;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.UnityHelpers {
+namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity {
 	public static class SerializedObjectHelper {
 		private const string IS_VALID_PROPERTY_NAME = "isValid";
 

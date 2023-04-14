@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
-using raitichan.com.modular_avatar.extensions.Editor.UnityHelpers;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Editor.Windows;
 using raitichan.com.modular_avatar.extensions.Modules;

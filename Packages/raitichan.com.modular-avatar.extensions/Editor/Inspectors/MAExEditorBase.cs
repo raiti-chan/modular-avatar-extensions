@@ -1,5 +1,5 @@
 ﻿using System.Reflection;
-using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 

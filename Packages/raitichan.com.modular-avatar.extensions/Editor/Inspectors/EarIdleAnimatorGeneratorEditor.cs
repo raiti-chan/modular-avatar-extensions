@@ -1,5 +1,5 @@
 ﻿using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
-using raitichan.com.modular_avatar.extensions.Editor.MAAccessHelpers;
+using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
