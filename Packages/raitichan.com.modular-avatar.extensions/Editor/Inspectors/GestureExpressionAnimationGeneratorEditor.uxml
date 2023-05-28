@@ -1,0 +1,19 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="GestureExpressionAnimationGeneratorEditor">
+        <Style src="GestureExpressionAnimationGeneratorEditor.uss" />
+        <ui:IMGUIContainer name="PreviewView" />
+        <ui:VisualElement name="LeftRightSelectGroup" style="flex-direction: row; margin-top: 10px;">
+            <ui:Button text="Left" name="Left" class="selected" style="flex-grow: 1;" />
+            <ui:Button text="Right" name="Right" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="GestureSelectGroup" style="margin-top: 10px;">
+            <ui:Button text="Fist" name="Fist" class="selected" />
+            <ui:Button text="HandOpen" name="HandOpen" />
+            <ui:Button text="FingerPoint" name="FingerPoint" />
+            <ui:Button text="Victory" name="Victory" />
+            <ui:Button text="RockNRoll" name="RockNRoll" />
+            <ui:Button text="HandGun" name="HandGun" />
+            <ui:Button text="ThumbsUp" name="ThumbsUp" />
+        </ui:VisualElement>
+    </ui:VisualElement>
+</ui:UXML>

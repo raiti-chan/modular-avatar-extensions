@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8937604914671440327}
-  - component: {fileID: 8958919121419619801}
+  - component: {fileID: 4144795762742674911}
   m_Layer: 0
   m_Name: AvatarSetting
   m_TagString: Untagged
@@ -33,7 +33,7 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &8958919121419619801
+--- !u!114 &4144795762742674911
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -42,14 +42,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 3587253376488565400}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: af43171cf0e846c19c34c0420dac976a, type: 3}
+  m_Script: {fileID: 11500000, guid: 7ef83cb0c23d4d7c9d41021e544a1978, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  installTargetType: 0
+  InstallTargetType: 0
+  menuToAppend: {fileID: 11400000, guid: b7365d2f1831cf34e8f875df917dac32, type: 2}
   installTargetMenu: {fileID: 0}
-  installTargetFolderCreator: {fileID: 0}
-  folderName: "\u30A2\u30D0\u30BF\u30FC\u8A2D\u5B9A"
-  icon: {fileID: 0}
+  installTargetCreator: {fileID: 0}
 --- !u!1001 &1103678439978027077
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -119,14 +118,15 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8527718406303436937, guid: 2eafb9f4072afb54e8064a44f1736221,
         type: 3}
-      propertyPath: InstallTargetType
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: installTargetMenu
+      value: 
+      objectReference: {fileID: 11400000, guid: 6ef785a1bb24f14419088ffd4bbdc757,
+        type: 2}
     - target: {fileID: 8527718406303436937, guid: 2eafb9f4072afb54e8064a44f1736221,
         type: 3}
       propertyPath: installTargetFolderCreator
       value: 
-      objectReference: {fileID: 8958919121419619801}
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2eafb9f4072afb54e8064a44f1736221, type: 3}
 --- !u!4 &2092234011293598718 stripped
@@ -144,14 +144,15 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2348138736385549450, guid: c9c99b04355ebcc4eac3b3e8b8ecdb29,
         type: 3}
-      propertyPath: InstallTargetType
-      value: 1
-      objectReference: {fileID: 0}
+      propertyPath: installTargetMenu
+      value: 
+      objectReference: {fileID: 11400000, guid: 6ef785a1bb24f14419088ffd4bbdc757,
+        type: 2}
     - target: {fileID: 2348138736385549450, guid: c9c99b04355ebcc4eac3b3e8b8ecdb29,
         type: 3}
       propertyPath: installTargetFolderCreator
       value: 
-      objectReference: {fileID: 8958919121419619801}
+      objectReference: {fileID: 0}
     - target: {fileID: 5027695676304814094, guid: c9c99b04355ebcc4eac3b3e8b8ecdb29,
         type: 3}
       propertyPath: m_Name

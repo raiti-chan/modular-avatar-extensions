@@ -85,7 +85,7 @@ MonoBehaviour:
   InstallTargetType: 0
   menuToAppend: {fileID: 11400000, guid: 495def6ce3058df489121471c28a9926, type: 2}
   installTargetMenu: {fileID: 0}
-  installTargetFolderCreator: {fileID: 0}
+  installTargetCreator: {fileID: 0}
 --- !u!114 &2056670764737821158
 MonoBehaviour:
   m_ObjectHideFlags: 0

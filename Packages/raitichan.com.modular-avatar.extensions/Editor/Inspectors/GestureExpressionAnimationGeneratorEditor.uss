@@ -1,0 +1,3 @@
+﻿Button.selected {
+    background-color: rgba(130, 130, 130, 255);
+}

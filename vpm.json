@@ -1,0 +1,30 @@
+﻿{
+  "name": "Modular Avatar Extensions",
+  "id": "raitichan.com.modular-avatar.extensions.vpm",
+  "author": "Raitichan",
+  "url": "https://raw.githubusercontent.com/raiti-chan/modular-avatar-extensions/master/vpm.json",
+  "packages": {
+    "raitichan.com.modular-avatar.extensions": {
+      "versions": {
+        "1.0.0": {
+          "name": "raitichan.com.modular-avatar.extensions",
+          "displayName": "Modular Avatar Extensions",
+          "version": "1.0.0",
+          "unity": "2019.4",
+          "description": "Extend Modular Avatar and add various modules.",
+          "author": {
+            "name": "Raitichan",
+            "email": "",
+            "url": "https://github.com/raiti-chan"
+          },
+          "url": "https://github.com/raiti-chan/modular-avatar-extensions/releases/download/1.0.0/raitichan.com.modular-avatar.extensions-1.0.0.zip",
+          "repo": "https://raw.githubusercontent.com/raiti-chan/modular-avatar-extensions/master/vpm.json",
+          "vpmDependencies": {
+            "com.vrchat.avatars": "3.1.10",
+            "nadena.dev.modular-avatar": "1.5.1"
+          }
+        }
+      }
+    }
+  }
+}

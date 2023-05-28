@@ -1,0 +1,18 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="ObjectPresetAnimatorGeneratorEditor">
+        <Style src="ObjectPresetAnimatorGeneratorEditor.uss" />
+        <ui:VisualElement name="BaseProperties">
+            <uie:PropertyField binding-path="displayName" name="DisplayName" />
+            <uie:PropertyField binding-path="parameterName" name="ParameterName" />
+            <uie:PropertyField binding-path="menuIcon" name="MenuIcon" />
+            <uie:PropertyField name="IsInternal" binding-path="isInternal" />
+            <uie:PropertyField name="Saved" binding-path="saved" />
+        </ui:VisualElement>
+        <ui:VisualElement name="TabGroup" style="flex-direction: row; margin-bottom: 15px;">
+            <ui:Button text="Preset" name="PresetButton" class="selected-inspector-mode" style="flex-grow: 1;" />
+            <ui:Button text="Toggle" name="ToggleButton" style="flex-grow: 1;" />
+        </ui:VisualElement>
+        <ui:VisualElement name="PresetElement" />
+        <ui:VisualElement name="ToggleElement" style="display: none;" />
+    </ui:VisualElement>
+</ui:UXML>
