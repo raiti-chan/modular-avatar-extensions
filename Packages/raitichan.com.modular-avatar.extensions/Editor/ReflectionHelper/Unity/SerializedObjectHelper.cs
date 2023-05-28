@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using raitichan.com.modular_avatar.extensions.ReflectionHelper;
 using UnityEditor;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity {

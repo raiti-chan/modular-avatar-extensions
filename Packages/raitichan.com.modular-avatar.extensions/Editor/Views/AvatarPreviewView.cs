@@ -89,6 +89,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._camera.Render();
 			Unsupported.useScriptableRenderPipeline = oldAllowPipes;
 
+			if (this._material == null) {
+				this._material = CreateMaterial();
+			}
+
 			Graphics.DrawTexture(rect, this._renderTexture, this._material);
 			return false;
 		}

@@ -5,6 +5,7 @@ using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Editor.Windows;
 using raitichan.com.modular_avatar.extensions.Modules;
+using raitichan.com.modular_avatar.extensions.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEditor;
 using UnityEditorInternal;
@@ -289,7 +290,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 			};
 			this._objectReorderableList.onAddCallback += list => {
 				int lastIndex = list.count;
-				foreach (GameObject gameObject in GameObjectTreeViewWindow.ShowModalWindow(RuntimeUtil.FindAvatarInParents(this._target.transform).transform)) {
+				foreach (GameObject gameObject in GameObjectTreeViewWindow.ShowModalWindow(RuntimeUtilHelper.FindAvatarInParents(this._target.transform).transform)) {
 					if (list.serializedProperty.GetArrayElements().ToObjectReferenceValues().Contains(gameObject)) continue;
 					list.serializedProperty.InsertArrayElementAtIndex(lastIndex);
 					list.serializedProperty.GetArrayElementAtIndex(lastIndex).objectReferenceValue = gameObject;
@@ -614,7 +615,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 			};
 			this._objectReorderableList.onAddCallback += list => {
 				int lastIndex = list.count;
-				foreach (GameObject gameObject in GameObjectTreeViewWindow.ShowModalWindow(RuntimeUtil.FindAvatarInParents(this._target.transform).transform)) {
+				foreach (GameObject gameObject in GameObjectTreeViewWindow.ShowModalWindow(RuntimeUtilHelper.FindAvatarInParents(this._target.transform).transform)) {
 					if (list.serializedProperty.GetArrayElements().ToObjectReferenceValues().Contains(gameObject)) continue;
 					list.serializedProperty.InsertArrayElementAtIndex(lastIndex);
 					list.serializedProperty.GetArrayElementAtIndex(lastIndex).objectReferenceValue = gameObject;

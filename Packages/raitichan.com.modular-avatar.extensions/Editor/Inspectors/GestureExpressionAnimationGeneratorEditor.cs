@@ -7,6 +7,7 @@ using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Editor.Views;
 using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.Modules;
+using raitichan.com.modular_avatar.extensions.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.ScriptableObjects;
 using UnityEditor;
 using UnityEditorInternal;
@@ -51,7 +52,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 			this._inspectorState = InspectorState.Default;
 			this._target = (MAExGestureExpressionAnimationGenerator)this.target;
 			this._facePathProperty = this.serializedObject.FindProperty(nameof(MAExGestureExpressionAnimationGenerator.facePath));
-			this._descriptor = RuntimeUtil.FindAvatarInParents(this._target.transform);
+			this._descriptor = RuntimeUtilHelper.FindAvatarInParents(this._target.transform);
 			if (this._descriptor == null) {
 				this._inspectorState = InspectorState.NotFoundAvatar;
 				return;

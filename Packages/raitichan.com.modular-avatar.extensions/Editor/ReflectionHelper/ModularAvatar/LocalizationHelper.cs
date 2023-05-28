@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Reflection;
+using raitichan.com.modular_avatar.extensions.ReflectionHelper;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar {
 	public static class LocalizationHelper {

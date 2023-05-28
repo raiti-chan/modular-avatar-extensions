@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using nadena.dev.modular_avatar.core;
 using raitichan.com.modular_avatar.extensions.Enums;
+using raitichan.com.modular_avatar.extensions.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.ScriptableObjects;
 using UnityEngine;
 
@@ -13,7 +13,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 		public GestureAnimationSet rightAnimationSet;
 
 		public SkinnedMeshRenderer GetFaceMesh() {
-			return RuntimeUtil.FindAvatarInParents(this.transform)?.transform.Find(this.facePath).GetComponent<SkinnedMeshRenderer>();
+			return RuntimeUtilHelper.FindAvatarInParents(this.transform)?.transform.Find(this.facePath).GetComponent<SkinnedMeshRenderer>();
 		}
 
 		public GestureAnimation GetGestureAnimation(LeftAndRight leftAndRight, Gesture gesture) {

@@ -2,7 +2,7 @@
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper {
+namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 	public static class ExpressionTreeUtils {
 		public static Action CreateStaticMethodCallAction(MethodInfo methodInfo) {
 			if (methodInfo == null) throw new ArgumentNullException(nameof(methodInfo));
