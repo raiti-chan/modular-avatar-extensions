@@ -11,8 +11,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 		private readonly List<SerializedProperty> _data = new List<SerializedProperty>();
 		private SerializedProperty _serializedProperty;
-		private Func<BindableElement> _makeItem;
-		private Action<SerializedProperty, BindableElement, int> _bindItem;
+		private Func<VisualElement> _makeItem;
+		private Action<SerializedProperty, VisualElement, int> _bindItem;
 
 		private readonly ListView _listView;
 		private readonly IntegerField _arraySizeField;
@@ -26,7 +26,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 		public event Action<SerializedProperty, int> onRemove;
 		public event Action<SerializedProperty, int> onUp;
 		public event Action<SerializedProperty, int> onDown;
-		public Func<BindableElement> MakeItem {
+		public event Action<SerializedProperty> onSelectionChanged;
+		public Func<VisualElement> MakeItem {
 			get => this._makeItem;
 			set {
 				if (this._makeItem == value) return;
@@ -34,13 +35,18 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 				this.Refresh(false);
 			}
 		}
-		public Action<SerializedProperty, BindableElement, int> BindItem {
+		public Action<SerializedProperty, VisualElement, int> BindItem {
 			get => this._bindItem;
 			set {
 				if (this._bindItem == value) return;
 				this._bindItem = value;
 				this.Refresh(false);
 			}
+		}
+
+		public int ItemHeight {
+			get => this._listView.itemHeight;
+			set => this._listView.itemHeight = value;
 		}
 
 
@@ -89,7 +95,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this.Refresh(true);
 		}
 
-		private void Refresh(bool updateArray) {
+		public void Refresh(bool updateArray) {
 			if (updateArray) {
 				this._data.Clear();
 
@@ -179,21 +185,28 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 		}
 
 		private void ListViewBindItem(VisualElement element, int index) {
-			if (!(element is BindableElement bindableElement)) {
-				throw new InvalidOperationException("Can't find BindableElement: please provide BindableVisualElements or provide your own Listview.bindItem callback");
-			}
-
 			if (this.BindItem != null) {
-				this.BindItem(this._serializedProperty, bindableElement, index);
+				this.BindItem(this._serializedProperty, element, index);
 				return;
 			}
 
+			if (!(element is IBindable bindable)) {
+				throw new InvalidOperationException("Can't find BindableElement: please provide BindableVisualElements or provide your own Listview.bindItem callback");
+			}
+
 			SerializedProperty parentProperty = this._data[index];
-			bindableElement.BindProperty(parentProperty);
+			bindable.BindProperty(parentProperty);
 		}
 
-		protected virtual void ListViewSelectionChanged(List<object> obj) {
+		private void ListViewSelectionChanged(List<object> obj) {
 			this.ButtonStateChange();
+			if (this.onSelectionChanged == null) return;
+			int selectIndex = this._listView.selectedIndex;
+			if (0 <= selectIndex && selectIndex < this._data.Count) {
+				this.onSelectionChanged(this._data[selectIndex]);
+			} else {
+				this.onSelectionChanged(null);
+			}
 		}
 
 		public override void HandleEvent(EventBase evt) {
@@ -211,6 +224,17 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 		public new class UxmlFactory : UxmlFactory<CustomListView, UxmlTraits> { }
 
-		public new class UxmlTraits : BindableElement.UxmlTraits { }
+		public new class UxmlTraits : BindableElement.UxmlTraits {
+			private readonly UxmlIntAttributeDescription _itemHeight = new UxmlIntAttributeDescription() {
+				name = "item-height",
+				defaultValue = 30
+			};
+
+			public override void Init(VisualElement ve, IUxmlAttributes bag, CreationContext cc) {
+				base.Init(ve, bag, cc);
+				if (!(ve is CustomListView customListView)) return;
+				customListView.ItemHeight = this._itemHeight.GetValueFromBag(bag, cc);
+			}
+		}
 	}
 }

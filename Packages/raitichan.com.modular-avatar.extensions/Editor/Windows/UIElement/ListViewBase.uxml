@@ -12,5 +12,5 @@
         </uie:ToolbarButton>
         <uie:ToolbarSpacer picking-mode="Ignore" style="width: 13px;" />
     </uie:Toolbar>
-    <uie:IntegerField name="_ArraySizeField" readonly="true" binding-path="Array.size" style="display: none;" />
+    <uie:IntegerField name="_ArraySizeField" readonly="true" binding-path="Array.size" style="display: flex;" />
 </ui:UXML>
