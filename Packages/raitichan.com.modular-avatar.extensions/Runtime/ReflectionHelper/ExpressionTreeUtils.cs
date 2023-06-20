@@ -43,12 +43,23 @@ namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 			return expression.Compile();
 		}
 
-		public static Func<TInstance, TResult> CreateInstanceValueGetFunction<TInstance, TResult>(PropertyInfo fieldInfo) {
-			if (fieldInfo == null) throw new ArgumentNullException(nameof(fieldInfo));
+		public static Func<TInstance, TResult> CreateInstanceValueGetFunction<TInstance, TResult>(PropertyInfo propertyInfo) {
+			if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
 
 			ParameterExpression instanceParameter = Expression.Parameter(typeof(TInstance), "instance");
 			Expression<Func<TInstance, TResult>> expression = Expression.Lambda<Func<TInstance, TResult>>(
-				Expression.Property(instanceParameter, fieldInfo),
+				Expression.Property(instanceParameter, propertyInfo),
+				instanceParameter);
+			return expression.Compile();
+		}
+
+		public static Func<TInstance, TResult> CreateInstanceValueGetFunction<TInstance, TResult>(PropertyInfo propertyInfo, Type instanceType) {
+			if (propertyInfo == null) throw new ArgumentNullException(nameof(propertyInfo));
+			if (instanceType == null) throw new ArgumentNullException(nameof(instanceType));
+
+			ParameterExpression instanceParameter = Expression.Parameter(typeof(TInstance), "instance");
+			Expression<Func<TInstance, TResult>> expression = Expression.Lambda<Func<TInstance, TResult>>(
+				Expression.Property(Expression.Convert(instanceParameter, instanceType), propertyInfo),
 				instanceParameter);
 			return expression.Compile();
 		}

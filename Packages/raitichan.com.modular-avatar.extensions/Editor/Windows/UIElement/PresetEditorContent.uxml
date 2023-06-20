@@ -1,0 +1,12 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <uie:Toolbar style="flex-direction: row;">
+        <uie:ToolbarToggle focusable="false" label="ShowObjects" name="ShowObjectTabButton" value="true" style="margin-left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="BlendShapes" name="BlendShapeTabButton" />
+        <uie:ToolbarToggle focusable="false" label="ToggleObject" name="ToggleObjectTabButton" />
+    </uie:Toolbar>
+    <ui:VisualElement name="EditorPanelContent" style="flex-grow: 1;">
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" binding-path="showObjects" style="flex-grow: 1;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; display: none;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleObjectPanel name="ToggleObjectPanel" style="flex-grow: 1; display: none;" />
+    </ui:VisualElement>
+</ui:UXML>

@@ -1,0 +1,22 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement name="ListPanel" style="flex-grow: 1;">
+        <ui:ListView focusable="true" name="ListView" item-height="70" style="flex-grow: 1; border-top-width: 1px; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); border-right-width: 1px;" />
+        <uie:Toolbar name="Footer" style="border-top-width: 1px;">
+            <uie:ToolbarButton text="UP" name="UpButton" style="-unity-text-align: upper-center; width: 60px; margin-right: -1px;" />
+            <uie:ToolbarButton text="DOWN" name="DownButton" style="width: 60px; -unity-text-align: upper-center;" />
+            <uie:ToolbarSpacer style="flex-grow: 1;" />
+            <uie:ToolbarButton name="AddButton" style="width: 30px; -unity-text-align: upper-center; align-items: center; justify-content: center;">
+                <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Plus&apos;);" />
+            </uie:ToolbarButton>
+            <uie:ToolbarButton name="RemoveButton" style="width: 30px; -unity-text-align: upper-center; margin-left: -1px; align-items: center; justify-content: center;">
+                <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Minus&apos;);" />
+            </uie:ToolbarButton>
+            <uie:ToolbarSpacer style="width: 13px;" />
+        </uie:Toolbar>
+        <uie:IntegerField value="0" name="_ArraySizeField" binding-path="Array.size" readonly="true" style="display: none;" />
+    </ui:VisualElement>
+    <ui:VisualElement name="EditorPanel" style="flex-grow: 4; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); border-top-width: 1px;">
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditorContent name="PresetEditorContent" style="flex-grow: 1;" />
+    </ui:VisualElement>
+    <uie:IntegerField value="0" name="_DefaultValueField" binding-path="defaultValue" readonly="true" style="display: none;" />
+</ui:UXML>
