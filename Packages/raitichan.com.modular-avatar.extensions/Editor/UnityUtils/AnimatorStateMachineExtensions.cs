@@ -1,4 +1,5 @@
-﻿using UnityEditor.Animations;
+﻿using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.UnityUtils {
@@ -21,6 +22,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UnityUtils {
 			transition.offset = 0;
 			transition.interruptionSource = TransitionInterruptionSource.None;
 			return transition;
+		}
+
+		public static AnimatorStateTransition InsertTransitionEx(this AnimatorState target, AnimatorState dst, int index) {
+			AnimatorStateTransition newTransition = new AnimatorStateTransition() {
+				hasExitTime = false,
+				exitTime = 0,
+				hasFixedDuration = true,
+				duration = 0,
+				offset = 0,
+				interruptionSource = TransitionInterruptionSource.None,
+				destinationState = dst,
+				hideFlags = HideFlags.HideInHierarchy,
+			};
+			AssetDatabase.AddObjectToAsset(newTransition, AssetDatabase.GetAssetPath(target));
+			AnimatorStateTransition[] transitions = target.transitions;
+			ArrayUtility.Insert(ref transitions, index, newTransition);
+			target.transitions = transitions;
+			return newTransition;
+		}
+	}
+
+	public static class AnimatorStateTransitionExtensions {
+		public static AnimatorStateTransition AddConditionEx(this AnimatorStateTransition target, AnimatorConditionMode mode, float threshold, string parameter) {
+			target.AddCondition(mode, threshold, parameter);
+			return target;
 		}
 	}
 }

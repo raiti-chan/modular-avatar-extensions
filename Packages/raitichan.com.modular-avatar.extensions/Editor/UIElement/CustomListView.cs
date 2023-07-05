@@ -10,6 +10,19 @@ using UnityEngine.UIElements;
 namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 	public class CustomListView : CustomBindableElement {
 		private const string UXML_GUID = "75e8cb2f03bd602419dca8d3914c38f0";
+		private const string LIGHT_USS_GUID = "92a2215ba5982054e83e93233da2b1b0";
+		private const string DARK_USS_GUID = "efd3b7bd390b1c9428c30d33ef02c53e";
+
+		private static readonly StyleSheet LIGHT_STYLE_SHEET;
+		private static readonly StyleSheet DARK_STYLE_SHEET;
+
+		static CustomListView() {
+			string lightPath = AssetDatabase.GUIDToAssetPath(LIGHT_USS_GUID);
+			LIGHT_STYLE_SHEET = AssetDatabase.LoadAssetAtPath<StyleSheet>(lightPath);
+			
+			string darkPath = AssetDatabase.GUIDToAssetPath(DARK_USS_GUID);
+			DARK_STYLE_SHEET = AssetDatabase.LoadAssetAtPath<StyleSheet>(darkPath);
+		}
 
 		private readonly List<SerializedProperty> _data = new List<SerializedProperty>();
 		private Func<VisualElement> _makeItem;
@@ -102,6 +115,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			string uxmlPath = AssetDatabase.GUIDToAssetPath(UXML_GUID);
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
+			
+			this.styleSheets.Add(EditorGUIUtility.isProSkin ? DARK_STYLE_SHEET : LIGHT_STYLE_SHEET);
 
 			this._listView = this.Q<ListView>("ShowObjectList");
 			this._listView.itemsSource = this._data;

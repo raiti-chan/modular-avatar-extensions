@@ -8,10 +8,10 @@
         <uie:ToolbarButton text="DOWN" name="DownButton" style="width: 60px; -unity-text-align: upper-center;" />
         <uie:ToolbarSpacer picking-mode="Ignore" style="flex-grow: 1;" />
         <uie:ToolbarButton name="AddButton" style="width: 30px; -unity-text-align: upper-center; align-items: center; justify-content: center;">
-            <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Plus&apos;);" />
+            <ui:VisualElement name="ButtonIcon" style="width: 16px; height: 16px;" />
         </uie:ToolbarButton>
         <uie:ToolbarButton name="RemoveButton" style="width: 30px; -unity-text-align: upper-center; margin-left: -1px; align-items: center; justify-content: center;">
-            <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Minus&apos;);" />
+            <ui:VisualElement name="ButtonIcon" style="width: 16px; height: 16px;" />
         </uie:ToolbarButton>
         <uie:ToolbarSpacer picking-mode="Ignore" style="width: 13px;" />
     </uie:Toolbar>
