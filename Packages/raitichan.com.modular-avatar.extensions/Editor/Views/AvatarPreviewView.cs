@@ -37,7 +37,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._avatarObj = this.CreateAvatarObj(descriptor);
 			this.AddGameObject(this._avatarObj);
 
-			this.ResetCameraTransform();
+			this.ResetCameraTransform(CameraAnchor.Head);
 		}
 
 		public bool OnGUILayout(int size) {
@@ -68,7 +68,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 						switch (e.button) {
 							case 0:
 							case 1:
-								this.RotationCamera(e.delta);
+								this.RotationAvatar(e.delta);
 								break;
 							case 2:
 								this.MoveCamera(e.delta);
@@ -97,19 +97,32 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			return false;
 		}
 
+		public void ResetCameraTransform(CameraAnchor cameraAnchor) {
+			switch (cameraAnchor) {
+				case CameraAnchor.Head: {
+					this._cameraObj.transform.position = new Vector3(0, this.Descriptor.ViewPosition.y, 1);
+					this._cameraObj.transform.rotation = Quaternion.Euler(0, 180, 0);
+				}
+					break;
+				case CameraAnchor.Body: {
+					this._cameraObj.transform.position = new Vector3(0, this.Descriptor.ViewPosition.y / 1.7f, 1);
+					this._cameraObj.transform.rotation = Quaternion.Euler(0, 180, 0);
+					this._camera.orthographicSize = 0.7f;
+				}
+					break;
+				default:
+					throw new ArgumentOutOfRangeException(nameof(cameraAnchor), cameraAnchor, null);
+			}
+		}
+
 
 		public void Dispose() {
-			this._camera.targetTexture = null;
+			if (this._camera != null) this._camera.targetTexture = null;
 			if (this._renderTexture != null) Object.DestroyImmediate(this._renderTexture);
 			if (this._avatarObj != null) Object.DestroyImmediate(this._cameraObj);
 			if (this._lightObj != null) Object.DestroyImmediate(this._lightObj);
 			if (this._avatarObj != null) Object.DestroyImmediate(this._avatarObj);
 			EditorSceneManager.ClosePreviewScene(this._scene);
-		}
-
-		private void ResetCameraTransform() {
-			this._cameraObj.transform.position = new Vector3(0, this.Descriptor.ViewPosition.y, 1);
-			this._cameraObj.transform.rotation = Quaternion.Euler(0, 180, 0);
 		}
 
 		private void ResizeMonitor(int width, int height) {
@@ -136,7 +149,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			transform.position = cameraPos;
 		}
 
-		private void RotationCamera(Vector2 delta) {
+		private void RotationAvatar(Vector2 delta) {
 			if (delta.x == 0.0f) return;
 			Transform transform = this._avatarObj.transform;
 			Vector3 rotation = transform.rotation.eulerAngles;
@@ -188,6 +201,11 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 
 		private void AddGameObject(GameObject obj) {
 			SceneManager.MoveGameObjectToScene(obj, this._scene);
+		}
+
+		public enum CameraAnchor {
+			Head,
+			Body
 		}
 	}
 }

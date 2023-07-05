@@ -1,16 +1,3 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:ListView focusable="true" name="ShowObjectList" picking-mode="Ignore" style="flex-grow: 1;" />
-    <uie:Toolbar name="Footer" picking-mode="Ignore" style="border-top-width: 1px; flex-direction: row;">
-        <uie:ToolbarButton text="UP" name="UpButton" style="-unity-text-align: upper-center; width: 60px; margin-right: -1px;" />
-        <uie:ToolbarButton text="DOWN" name="DownButton" style="width: 60px; -unity-text-align: upper-center;" />
-        <uie:ToolbarSpacer picking-mode="Ignore" style="flex-grow: 1;" />
-        <uie:ToolbarButton name="AddButton" style="width: 30px; -unity-text-align: upper-center; align-items: center; justify-content: center;">
-            <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Plus&apos;);" />
-        </uie:ToolbarButton>
-        <uie:ToolbarButton name="RemoveButton" style="width: 30px; -unity-text-align: upper-center; margin-left: -1px; align-items: center; justify-content: center;">
-            <ui:VisualElement style="width: 16px; height: 16px; background-image: resource(&apos;d_Toolbar Minus&apos;);" />
-        </uie:ToolbarButton>
-        <uie:ToolbarSpacer picking-mode="Ignore" style="width: 13px;" />
-    </uie:Toolbar>
-    <uie:IntegerField name="_ArraySizeField" readonly="true" binding-path="Array.size" style="display: none;" />
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ShowObjectListView" binding-path="showObjects" picking-mode="Ignore" title="Object" style="flex-grow: 1;" />
 </ui:UXML>

@@ -1,20 +1,18 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <ui:VisualElement name="Root" style="flex-grow: 1;">
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="Root" style="flex-grow: 1;">
         <ui:VisualElement name="Header" style="flex-direction: row; margin-bottom: 5px; margin-left: 5px; margin-right: 5px; margin-top: 5px;">
-            <ui:IMGUIContainer name="Preview" style="width: 200px; height: 200px; border-left-color: rgb(34, 34, 34); border-right-color: rgb(34, 34, 34); border-top-color: rgb(34, 34, 34); border-bottom-color: rgb(34, 34, 34); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px;" />
+            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditorPreview name="Preview" focusable="false" style="border-left-color: rgb(34, 34, 34); border-right-color: rgb(34, 34, 34); border-top-color: rgb(34, 34, 34); border-bottom-color: rgb(34, 34, 34); border-left-width: 1px; border-right-width: 1px; border-top-width: 1px; border-bottom-width: 1px; width: 200px; height: 200px;" />
             <ui:VisualElement name="Setting" style="flex-grow: 1; flex-shrink: 1;">
                 <uie:ObjectField label="Avatar" name="AvatarField" allow-scene-objects="true" />
                 <uie:ObjectField label="Preset" name="PresetField" allow-scene-objects="true" />
-                <uie:PropertyField name="DisplayNameField" binding-path="displayName" />
-                <uie:PropertyField name="MenuIconField" binding-path="menuIcon" label="Menu Icon" />
                 <uie:PropertyField name="ParameterNameField" binding-path="parameterName" label="Parameter Name" />
                 <uie:PropertyField name="IsInternalField" binding-path="isInternal" label="Is Internal" />
                 <uie:PropertyField name="SavedField" binding-path="saved" label="Saved" />
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Body" style="flex-grow: 1;">
-            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditor binding-path="presets" style="flex-direction: row; flex-grow: 1;" />
+            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditor style="flex-grow: 1; flex-direction: row;" />
         </ui:VisualElement>
         <ui:VisualElement name="Footer" />
-    </ui:VisualElement>
+    </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
 </ui:UXML>

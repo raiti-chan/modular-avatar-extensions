@@ -16,20 +16,20 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity 
 		public static Type Type {
 			get {
 				if (_type != null) return _type;
-				Type type = Type.GetType(TYPE_NAME) ?? throw new NullReferenceException($"Notfound Type : {TYPE_NAME}");
+				Type type = Type.GetType(TYPE_NAME) ?? throw new NullReferenceException($"Notfound : {TYPE_NAME}");
 				_type = type;
 				return _type;
 			}
 		}
 
-		private readonly EventBase _eventBase;
+		private EventBase SerializedPropertyBindEvent { get; }
 
-		public SerializedPropertyBindEventHelper(EventBase eventBase) {
-			if (eventBase.GetType() != Type) {
-				throw new InvalidParameterException($"{nameof(eventBase)} is not SerializedPropertyBindEvent");
+		public SerializedPropertyBindEventHelper(EventBase serializedPropertyBindEvent) {
+			if (serializedPropertyBindEvent.GetType() != Type) {
+				throw new InvalidParameterException($"{nameof(serializedPropertyBindEvent)} is not SerializedPropertyBindEvent");
 			}
 
-			this._eventBase = eventBase;
+			this.SerializedPropertyBindEvent = serializedPropertyBindEvent;
 		}
 
 		private const string BIND_PROPERTY_PROPERTY_NAME = "bindProperty";
@@ -37,14 +37,14 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity 
 
 		public SerializedProperty GetBindProperty() {
 			if (_getBindPropertyFunction != null) {
-				return _getBindPropertyFunction.Invoke(this._eventBase);
+				return _getBindPropertyFunction.Invoke(this.SerializedPropertyBindEvent);
 			}
 
-			PropertyInfo propertyInfo = Type.GetProperty(BIND_PROPERTY_PROPERTY_NAME, BindingFlags.Instance | BindingFlags.Public);
-			if (propertyInfo == null) throw new NullReferenceException($"NotFound Property : {BIND_PROPERTY_PROPERTY_NAME}");
+			PropertyInfo propertyInfo = Type.GetProperty(BIND_PROPERTY_PROPERTY_NAME, BindingFlags.Public | BindingFlags.Instance);
+			if (propertyInfo == null) throw new NullReferenceException($"NotFound : {CLASS_NAME}.{BIND_PROPERTY_PROPERTY_NAME}{{get}}:SerializedProperty");
 
 			_getBindPropertyFunction = ExpressionTreeUtils.CreateInstanceValueGetFunction<EventBase, SerializedProperty>(propertyInfo, Type);
-			return _getBindPropertyFunction.Invoke(this._eventBase);
+			return _getBindPropertyFunction.Invoke(this.SerializedPropertyBindEvent);
 		}
 	}
 }

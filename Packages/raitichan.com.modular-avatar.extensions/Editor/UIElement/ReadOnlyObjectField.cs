@@ -5,7 +5,7 @@ using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.UIElements;
 
-namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
+namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 	public class ReadOnlyObjectField : BaseField<Object> {
 		private System.Type _objectType;
 		private readonly ReadOnlyObjectFieldDisplay _objectFieldDisplay;

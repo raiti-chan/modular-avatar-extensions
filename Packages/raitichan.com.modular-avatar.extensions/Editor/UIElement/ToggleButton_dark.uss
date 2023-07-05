@@ -1,0 +1,31 @@
+﻿.toggle-button {
+}
+
+.toggle-button:checked {
+    background-color: #346734;
+}
+
+.toggle-button:checked:hover {
+    background-color: #448744;
+}
+
+.toggle-button:checked:active {
+    background-color: #244724;
+}
+
+.toggle-button .unity-toggle__label {
+    flex-grow: 1;
+}
+
+.toggle-button .unity-toggle__input {
+    display: none;
+}
+
+.toggle-button .unity-toggle__input .unity-toggle__checkmark {
+    background-image: none;
+    padding-top: 0;
+    width: 0;
+    height: 0;
+    flex: 0 0 auto;
+    align-self: center;
+}

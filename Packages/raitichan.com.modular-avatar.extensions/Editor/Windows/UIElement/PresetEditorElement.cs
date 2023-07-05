@@ -1,11 +1,10 @@
 ﻿using System;
-using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity;
 using UnityEditor;
-using UnityEditor.UIElements;
 using UnityEngine.UIElements;
+using raitichan.com.modular_avatar.extensions.Editor.UIElement;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
-	public class PresetEditorElement : BindableElement {
+	public class PresetEditorElement : CustomBindableElement {
 		private const string UXML_GUID = "c4dcaa0840844d10a8bf49adf26f10f6";
 
 		public Action<PresetEditorElement> onSelectDefaultValue;
@@ -29,13 +28,5 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this.onSelectDefaultValue?.Invoke(this);
 		}
 
-		public override void HandleEvent(EventBase evt) {
-			if (evt.GetType() == SerializedObjectBindEventHelper.Type) {
-				this.Q<TextField>("DisplayNameField").bindingPath = "displayName";
-				this.Q<PropertyField>("MenuIconField").bindingPath = "menuIcon";
-			}
-			base.HandleEvent(evt);
-		}
-		
 	}
 }

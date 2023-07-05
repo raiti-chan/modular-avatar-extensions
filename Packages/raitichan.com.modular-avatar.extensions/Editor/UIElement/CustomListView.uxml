@@ -1,4 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <uie:Toolbar name="Header" style="justify-content: flex-start; flex-direction: row; -unity-text-align: middle-left;">
+        <ui:Label name="Title" text="Title" style="margin-left: 10px;" />
+    </uie:Toolbar>
     <ui:ListView focusable="true" name="ShowObjectList" picking-mode="Ignore" style="flex-grow: 1;" />
     <uie:Toolbar name="Footer" picking-mode="Ignore" style="border-top-width: 1px; flex-direction: row;">
         <uie:ToolbarButton text="UP" name="UpButton" style="-unity-text-align: upper-center; width: 60px; margin-right: -1px;" />
@@ -12,5 +15,5 @@
         </uie:ToolbarButton>
         <uie:ToolbarSpacer picking-mode="Ignore" style="width: 13px;" />
     </uie:Toolbar>
-    <uie:IntegerField name="_ArraySizeField" readonly="true" binding-path="Array.size" style="display: flex;" />
+    <uie:IntegerField name="_ArraySizeField" readonly="true" binding-path="Array.size" value="-1" style="display: none;" />
 </ui:UXML>
