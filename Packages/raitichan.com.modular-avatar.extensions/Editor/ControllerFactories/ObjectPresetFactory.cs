@@ -27,7 +27,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			AnimatorController controller = MAExUtils.CreateAnimator();
 			this.AddAnimatorParameter(controller);
 			this.CreatePresetSelectLayer(controller);
-			// this.CreateToggleLayer(controller);
 			int useParameterCount = this.Target.GetSyncedToggleParameterUseCount();
 			for (int parameterIndex = 0; parameterIndex < useParameterCount; parameterIndex++) {
 				this.CreateToggleLayer(controller, parameterIndex);
@@ -49,7 +48,11 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 			int syncParameterCount = this.Target.GetSyncedToggleParameterUseCount();
 			for (int parameterIndex = 0; parameterIndex < syncParameterCount; parameterIndex++) {
-				controller.AddParameter(this.CreateSyncParameterName(parameterIndex), AnimatorControllerParameterType.Bool);
+				controller.AddParameter(new AnimatorControllerParameter {
+					name = this.CreateSyncParameterName(parameterIndex),
+					type = AnimatorControllerParameterType.Bool,
+					defaultBool = true
+				});
 			}
 
 			for (int presetIndex = 0; presetIndex < this.Target.presets.Count; presetIndex++) {
@@ -68,15 +71,19 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				anyStatePosition = new Vector3(0, 50, 0)
 			};
 			AssetDatabase.AddObjectToAsset(stateMachine, controller);
-			AnimatorState rootState = stateMachine.AddStateEx("Root", _EMPTY_CLIP, 250);
+			AnimatorState rootState = stateMachine.AddStateEx("Root", _EMPTY_CLIP, 500);
 
 			for (int presetIndex = 0; presetIndex < this.Target.presets.Count; presetIndex++) {
 				AnimationClip presetClip = this.CreatePresetAnimationClip(presetIndex);
 				AssetDatabase.AddObjectToAsset(presetClip, controller);
 
-				AnimatorState presetState = stateMachine.AddStateEx($"{this.Target.parameterName}_{presetIndex}", presetClip, 500, presetIndex * 50);
+				AnimatorState presetState = stateMachine.AddStateEx($"{this.Target.parameterName}_{presetIndex}", presetClip, 250, presetIndex * 50);
 				rootState.AddTransitionEx(presetState).AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
 				presetState.AddTransitionEx(rootState).AddCondition(AnimatorConditionMode.NotEqual, presetIndex, this.Target.parameterName);
+
+				if (presetIndex == this.Target.defaultValue) {
+					stateMachine.defaultState = presetState;
+				}
 			}
 
 			AnimatorControllerLayer layer = new AnimatorControllerLayer {
@@ -109,32 +116,53 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			rootState.AddTransitionEx(globalState).AddCondition(AnimatorConditionMode.IfNot, 0, "IsLocal");
 			rootState.AddTransitionEx(localState).AddCondition(AnimatorConditionMode.If, 0, "IsLocal");
 
+			List<AnimatorState> globalPresetStates = new List<AnimatorState>();
+			List<AnimatorState> localPresetStates = new List<AnimatorState>();
+
 			for (int presetIndex = 0; presetIndex < this.Target.presets.Count; presetIndex++) {
 				MAExObjectPreset.Preset targetPreset = this.Target.presets[presetIndex];
 
 				AnimatorState presetStateGlobal = stateMachine.AddStateEx($"{this.Target.parameterName}_{presetIndex}_Global", _EMPTY_CLIP, 500, -presetIndex * 100 - 50);
 				globalState.AddTransitionEx(presetStateGlobal).AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
-				presetStateGlobal.AddTransitionEx(globalState).AddCondition(AnimatorConditionMode.NotEqual, presetIndex, this.Target.parameterName);
+				globalPresetStates.Add(presetStateGlobal);
 					
 				AnimatorState presetStateLocal = stateMachine.AddStateEx($"{this.Target.parameterName}_{presetIndex}_Local", _EMPTY_CLIP, 500, presetIndex * 100 + 50);
 				localState.AddTransitionEx(presetStateLocal).AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
-				presetStateLocal.AddTransitionEx(localState).AddCondition(AnimatorConditionMode.NotEqual, presetIndex, this.Target.parameterName);
-				
-				if (targetPreset.toggleSets.Count <= parameterIndex) continue;
+				localPresetStates.Add(presetStateLocal);
+
 				string localParameterName = this.CreateLocalParameterName(presetIndex, parameterIndex);
 				string globalParameterName = this.CreateSyncParameterName(parameterIndex);
+				if (targetPreset.toggleSets.Count <= parameterIndex) {
+					// 避難場所を作る
+					AnimatorState noneStateGlobal = stateMachine.AddStateEx($"{localParameterName}_NONE_Global", _EMPTY_CLIP, 750, -presetIndex * 100 - 50);
+					presetStateGlobal.AddTransitionEx(noneStateGlobal).AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
+					noneStateGlobal.AddTransitionEx(presetStateGlobal).AddCondition(AnimatorConditionMode.NotEqual, presetIndex, this.Target.parameterName);
+					AnimatorState noneStateLocal = stateMachine.AddStateEx($"{localParameterName}_NONE_Local", _EMPTY_CLIP, 750, presetIndex * 100 + 50);
+					presetStateLocal.AddTransitionEx(noneStateLocal).AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
+					noneStateLocal.AddTransitionEx(presetStateLocal).AddCondition(AnimatorConditionMode.NotEqual, presetIndex, this.Target.parameterName);
+					continue;
+				}
 				AnimationClip onClip = this.CreateToggleAnimationClip(presetIndex, parameterIndex);
 				AssetDatabase.AddObjectToAsset(onClip, controller);
 				if (targetPreset.toggleSets[parameterIndex].defaultValue) {
 					presetStateGlobal.motion = onClip;
 					presetStateLocal.motion = onClip;
+					if (presetIndex == this.Target.defaultValue) {
+						rootState.motion = onClip;
+						globalState.motion = onClip;
+						localState.motion = onClip;
+					}
 				}
 				{
 					AnimatorState onStateGlobal = stateMachine.AddStateEx($"{localParameterName}_ON_Global", onClip, 750, -presetIndex * 100 - 25);
 					AnimatorState offStateGlobal = stateMachine.AddStateEx($"{localParameterName}_OFF_Global", _EMPTY_CLIP, 750, -presetIndex * 100 - 75);
 
-					presetStateGlobal.AddTransitionEx(offStateGlobal).AddCondition(AnimatorConditionMode.IfNot, 0, globalParameterName);
-					presetStateGlobal.AddTransitionEx(onStateGlobal).AddCondition(AnimatorConditionMode.If, 0, globalParameterName);
+					presetStateGlobal.AddTransitionEx(offStateGlobal)
+						.AddConditionEx(AnimatorConditionMode.IfNot, 0, globalParameterName)
+						.AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
+					presetStateGlobal.AddTransitionEx(onStateGlobal)
+						.AddConditionEx(AnimatorConditionMode.If, 0, globalParameterName)
+						.AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
 					
 					onStateGlobal.AddTransitionEx(offStateGlobal).AddCondition(AnimatorConditionMode.IfNot, 0, globalParameterName);
 					offStateGlobal.AddTransitionEx(onStateGlobal).AddCondition(AnimatorConditionMode.If, 0, globalParameterName);
@@ -146,8 +174,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 					AnimatorState onStateLocal = stateMachine.AddStateEx($"{localParameterName}_ON_Local", onClip, 750, presetIndex * 100 + 25);
 					AnimatorState offStateLocal = stateMachine.AddStateEx($"{localParameterName}_OFF_Local", _EMPTY_CLIP, 750, presetIndex * 100 + 75);
 
-					presetStateLocal.AddTransitionEx(offStateLocal).AddCondition(AnimatorConditionMode.IfNot, 0, localParameterName);
-					presetStateLocal.AddTransitionEx(onStateLocal).AddCondition(AnimatorConditionMode.If, 0, localParameterName);
+					presetStateLocal.AddTransitionEx(offStateLocal)
+						.AddConditionEx(AnimatorConditionMode.IfNot, 0, localParameterName)
+						.AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
+					presetStateLocal.AddTransitionEx(onStateLocal)
+						.AddConditionEx(AnimatorConditionMode.If, 0, localParameterName)
+						.AddCondition(AnimatorConditionMode.Equals, presetIndex, this.Target.parameterName);
 
 					onStateLocal.AddTransitionEx(offStateLocal).AddCondition(AnimatorConditionMode.IfNot, 0, localParameterName);
 					offStateLocal.AddTransitionEx(onStateLocal).AddCondition(AnimatorConditionMode.If, 0, localParameterName);
@@ -173,7 +205,19 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				}
 			}
 
-
+			for (int i = 0; i < globalPresetStates.Count; i++) {
+				AnimatorState targetGlobal = globalPresetStates[i];
+				AnimatorState targetLocal = localPresetStates[i];
+				for (int j = 0; j < globalPresetStates.Count; j++) {
+					if (j == i) continue;
+					AnimatorState dstGlobal = globalPresetStates[j];
+					AnimatorState dstLocal = localPresetStates[j];
+					targetGlobal.AddTransitionEx(dstGlobal).AddCondition(AnimatorConditionMode.Equals, j, this.Target.parameterName);
+					targetLocal.AddTransitionEx(dstLocal).AddCondition(AnimatorConditionMode.Equals, j, this.Target.parameterName);
+					
+				}
+			}
+			
 			AnimatorControllerLayer layer = new AnimatorControllerLayer {
 				name = stateMachine.name,
 				avatarMask = null,
@@ -342,7 +386,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 					syncType = ParameterSyncType.Bool,
 					localOnly = false,
 					saved = false,
-					defaultValue = 0
+					defaultValue = 1
 				});
 			}
 
