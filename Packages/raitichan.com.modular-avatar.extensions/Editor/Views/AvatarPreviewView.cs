@@ -16,6 +16,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 		private readonly GameObject _lightObj;
 		private readonly GameObject _avatarObj;
 
+		private readonly Bounds _bounds;
+
 		private Camera _camera;
 		private Light _light;
 		public VRCAvatarDescriptor Descriptor { get; private set; }
@@ -37,6 +39,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 			this._avatarObj = this.CreateAvatarObj(descriptor);
 			this.AddGameObject(this._avatarObj);
 
+			this._bounds = this.CalculateBounds();
 			this.ResetCameraTransform(CameraAnchor.Head);
 		}
 
@@ -105,9 +108,15 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 				}
 					break;
 				case CameraAnchor.Body: {
-					this._cameraObj.transform.position = new Vector3(0, this.Descriptor.ViewPosition.y / 1.7f, 1);
+					Vector3 center = this._bounds.center;
+					Vector3 extents = this._bounds.extents;
+					this._camera.transform.position = new Vector3(center.x, center.y, 1);
 					this._cameraObj.transform.rotation = Quaternion.Euler(0, 180, 0);
-					this._camera.orthographicSize = 0.7f;
+					if (extents.x > extents.y) {
+						this._camera.orthographicSize = (float)this._height / this._width * extents.x;
+					} else {
+						this._camera.orthographicSize = extents.y;
+					}
 				}
 					break;
 				default:
@@ -134,7 +143,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 
 		private void ZoomCamera(Vector2 delta) {
 			if (delta == Vector2.zero) return;
-			float newOrthographicSize = this._camera.orthographicSize + delta.y / Mathf.Abs(delta.y) * 0.01f;
+			float newOrthographicSize = this._camera.orthographicSize + delta.y / Mathf.Abs(delta.y) * 0.05f;
 			if (newOrthographicSize > 0.01f) {
 				this._camera.orthographicSize = newOrthographicSize;
 			}
@@ -201,6 +210,35 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 
 		private void AddGameObject(GameObject obj) {
 			SceneManager.MoveGameObjectToScene(obj, this._scene);
+		}
+
+		private Bounds CalculateBounds() {
+			Bounds rootBounds = new Bounds(this._avatarObj.transform.position, Vector3.zero);
+			foreach (SkinnedMeshRenderer skinnedMeshRenderer in this._avatarObj.GetComponentsInChildren<SkinnedMeshRenderer>()) {
+				Mesh mesh = skinnedMeshRenderer.sharedMesh;
+				if (mesh == null) continue;
+				Transform centerObject = skinnedMeshRenderer.transform;
+				Bounds bounds = mesh.bounds;
+				Vector3 worldMin = centerObject.TransformPoint(bounds.min);
+				Vector3 worldMax = centerObject.TransformPoint(bounds.max);
+				bounds.min = worldMin;
+				bounds.max = worldMax;
+				rootBounds.Encapsulate(bounds);
+			}
+
+			foreach (MeshFilter meshFilter in this._avatarObj.GetComponentsInChildren<MeshFilter>()) {
+				Mesh mesh = meshFilter.sharedMesh;
+				if (mesh == null) continue;
+				Transform centerObject = meshFilter.transform;
+				Bounds bounds = mesh.bounds;
+				Vector3 worldMin = centerObject.TransformPoint(bounds.min);
+				Vector3 worldMax = centerObject.TransformPoint(bounds.max);
+				bounds.min = worldMin;
+				bounds.max = worldMax;
+				rootBounds.Encapsulate(bounds);
+			}
+
+			return rootBounds;
 		}
 
 		public enum CameraAnchor {

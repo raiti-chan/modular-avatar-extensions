@@ -1,0 +1,7 @@
+﻿#Footer #AddButton #ButtonIcon {
+    background-image: resource("Toolbar Plus");
+}
+
+#Footer #RemoveButton #ButtonIcon {
+    background-image: resource("Toolbar Minus");
+}
