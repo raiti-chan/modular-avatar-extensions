@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement style="flex-direction: column; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); border-bottom-width: 1px; flex-grow: 1; align-items: stretch; justify-content: center;">
+        <ui:Toggle name="DefaultToggle" label="Default Preset" />
+        <ui:TextField picking-mode="Ignore" name="DisplayNameField" binding-path="displayName" label="Preset Name" />
+        <uie:PropertyField name="MenuIconField" binding-path="menuIcon" label="Menu Icon" />
+    </ui:VisualElement>
+</ui:UXML>

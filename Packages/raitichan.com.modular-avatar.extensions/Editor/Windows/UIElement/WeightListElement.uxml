@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: center;">
+        <ui:Label text="BlendShapeName" binding-path="key" name="Label" style="flex-grow: 0; flex-basis: 30%; flex-shrink: 0; overflow: hidden; margin-left: 15px;" />
+        <ui:Slider picking-mode="Ignore" high-value="100" name="WeightSlider" style="flex-grow: 1; flex-shrink: 1;" />
+        <uie:FloatField name="WeightField" binding-path="value" style="flex-basis: 40px;" />
+    </ui:VisualElement>
+</ui:UXML>

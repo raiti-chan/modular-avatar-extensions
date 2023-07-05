@@ -1,0 +1,8 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ToggleSetListView" binding-path="toggleSets" picking-mode="Ignore" item-height="110" title="ToggleSet" style="flex-grow: 1; border-right-width: 1px; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); flex-basis: 30%;" />
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="ToggleSetView" is-bind-stopping="true" style="flex-grow: 1; flex-basis: 70%;">
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" style="flex-grow: 1;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; flex-direction: row;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.MaterialReplacePanel name="MaterialReplacePanel" style="flex-grow: 1; flex-direction: row;" />
+    </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
+</ui:UXML>

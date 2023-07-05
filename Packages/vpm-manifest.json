@@ -7,28 +7,53 @@
       "version": "0.1.17"
     },
     "nadena.dev.modular-avatar": {
-      "version": "1.1.2"
+      "version": "1.5.1"
+    },
+    "jp.lilxyzw.liltoon": {
+      "version": "1.4.0"
+    },
+    "vrchat.blackstartx.gesture-manager": {
+      "version": "3.8.4"
+    },
+    "lyuma.av3emulator": {
+      "version": "3.2.0"
     }
   },
   "locked": {
     "com.vrchat.avatars": {
-      "version": "3.2.0",
+      "version": "3.2.2-beta.1",
       "dependencies": {
-        "com.vrchat.base": "3.2.0"
+        "com.vrchat.base": "3.2.2-beta.1"
       }
     },
     "com.vrchat.base": {
-      "version": "3.2.0",
+      "version": "3.2.2-beta.1",
       "dependencies": {}
     },
     "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.19",
+      "version": "0.1.21",
       "dependencies": {}
     },
     "nadena.dev.modular-avatar": {
-      "version": "1.1.2",
+      "version": "1.6.0",
       "dependencies": {
-        "com.vrchat.avatars": ">=3.1.9"
+        "com.vrchat.avatars": ">=3.2.0"
+      }
+    },
+    "jp.lilxyzw.liltoon": {
+      "version": "1.4.0",
+      "dependencies": {}
+    },
+    "vrchat.blackstartx.gesture-manager": {
+      "version": "3.8.4",
+      "dependencies": {
+        "com.vrchat.avatars": "3.2.x"
+      }
+    },
+    "lyuma.av3emulator": {
+      "version": "3.2.0",
+      "dependencies": {
+        "com.vrchat.avatars": ">=3.1.0 <3.3.0"
       }
     }
   }

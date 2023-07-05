@@ -1,0 +1,7 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement style="flex-grow: 1; flex-direction: row; align-items: center;">
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.ReadOnlyObjectField name="OriginField" style="flex-shrink: 1; flex-grow: 1;" />
+        <ui:VisualElement style="flex-grow: 0; flex-shrink: 0; width: 15px; height: 15px; background-image: resource(&apos;d_PlayButton&apos;);" />
+        <uie:ObjectField allow-scene-objects="false" name="ReplaceField" style="flex-shrink: 1; flex-grow: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

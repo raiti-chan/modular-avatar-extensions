@@ -56,7 +56,7 @@
       "url": "https://packages.unity.com"
     },
     "com.unity.nuget.newtonsoft-json": {
-      "version": "2.0.2",
+      "version": "3.0.2",
       "depth": 1,
       "source": "registry",
       "dependencies": {},
@@ -137,7 +137,7 @@
       "dependencies": {
         "com.unity.burst": "1.4.11",
         "com.unity.mathematics": "1.2.5",
-        "com.unity.nuget.newtonsoft-json": "2.0.2"
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
       }
     },
     "com.vrchat.core.vpm-resolver": {
@@ -145,8 +145,20 @@
       "depth": 0,
       "source": "embedded",
       "dependencies": {
-        "com.unity.nuget.newtonsoft-json": "2.0.2"
+        "com.unity.nuget.newtonsoft-json": "3.0.2"
       }
+    },
+    "jp.lilxyzw.liltoon": {
+      "version": "file:jp.lilxyzw.liltoon",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "lyuma.av3emulator": {
+      "version": "file:lyuma.av3emulator",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
     },
     "nadena.dev.modular-avatar": {
       "version": "file:nadena.dev.modular-avatar",
@@ -158,6 +170,12 @@
     },
     "raitichan.com.modular-avatar.extensions": {
       "version": "file:raitichan.com.modular-avatar.extensions",
+      "depth": 0,
+      "source": "embedded",
+      "dependencies": {}
+    },
+    "vrchat.blackstartx.gesture-manager": {
+      "version": "file:vrchat.blackstartx.gesture-manager",
       "depth": 0,
       "source": "embedded",
       "dependencies": {}

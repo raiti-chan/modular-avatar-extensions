@@ -5,7 +5,7 @@ using VRC.SDK3.Avatars.Components;
 
 namespace raitichan.com.modular_avatar.extensions.Editor {
 	public static class VRCUtils {
-		public static string GetPathInAvatar(Transform target) {
+		public static string GetPathInAvatar(this Transform target) {
 			Stack<Transform> parentStack = new Stack<Transform>();
 			Transform current = target;
 
@@ -27,5 +27,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			stringBuilder.Remove(stringBuilder.Length - 1, 1);
 			return stringBuilder.ToString();
 		}
+
+		public static string GetPathInAvatar(this GameObject target) => target.transform.GetPathInAvatar();
+		public static string GetPathInAvatar(this Component target) => target.transform.GetPathInAvatar();
 	}
 }

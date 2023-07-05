@@ -1,0 +1,80 @@
+:root {
+    color: rgba(217, 217, 217, 0.95);
+}
+
+.unity-binding__prefab-override-bar {
+    background-color: rgb(5, 147, 224);
+}
+
+.unity-binding--animation-animated {
+    -unity-background-image-tint-color: rgb(137, 216, 255);
+}
+
+.unity-binding--animation-animated > .unity-toggle__checkmark {
+    -unity-background-image-tint-color: rgb(137, 216, 255);
+}
+
+.unity-binding--animation-recorded {
+    -unity-background-image-tint-color: rgb(255, 127, 127);
+}
+
+.unity-binding--animation-recorded > .unity-toggle__checkmark {
+    -unity-background-image-tint-color: rgb(255, 127, 127);
+}
+
+.unity-binding--animation-candidate {
+    -unity-background-image-tint-color: rgb(255, 170, 109);
+}
+
+.unity-binding--animation-candidate > .unity-toggle__checkmark {
+    -unity-background-image-tint-color: rgb(255, 170, 109);
+}
+
+.unity-min-max-slider__dragger {
+    background-image: resource("Builtin Skins/DarkSkin/Images/minmax slider thumb.png");
+}
+
+.unity-min-max-slider__input:active > .unity-min-max-slider__dragger:hover {
+    background-image: resource("Builtin Skins/DarkSkin/Images/minmax slider thumb act.png");
+}
+
+.unity-min-max-slider__input:focus > .unity-min-max-slider__dragger {
+    background-image: resource("Builtin Skins/DarkSkin/Images/minmax slider thumb.png");
+}
+
+.unity-base-text-field__input {
+    --unity-cursor-color: rgb(180, 180, 180);
+}
+
+.unity-list-view__item:hover {
+    background-color: rgb(48, 48, 48);
+}
+
+.unity-list-view__item--selected {
+    background-color: rgb(72, 72, 72);
+}
+
+.unity-list-view__item--selected:hover {
+    background-color: rgb(62, 95, 150);
+}
+
+.unity-list-view:focus > .unity-list-view__item--selected {
+    background-color: rgb(62, 95, 150);
+}
+
+.unity-progress-bar__progress {
+    background-image: resource("Builtin Skins/DarkSkin/Images/progress front.png");
+}
+
+.unity-progress-bar__background {
+    border-color: rgb(37, 37, 37);
+    background-color: rgb(48, 48, 48);
+}
+
+.unity-gradient-field__border {
+    border-color: rgb(29, 29, 29);
+}
+
+.unity-gradient-field__input:focus > .unity-gradient-field__border {
+    border-color: rgb(9, 17, 65);
+}

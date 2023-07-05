@@ -30,7 +30,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 	[InitializeOnLoad]
 	public class MAPatcher {
 		static MAPatcher() {
-			Harmony harmonyInstance = new Harmony("raitichan.com.modular_avatar.extensions.Editor");
+			Harmony harmonyInstance = new Harmony("raitichan.com.modular_avatar.extensions.Editor.MAPatcher");
 			harmonyInstance.UnpatchAll();
 
 			MethodInfo original = typeof(AvatarProcessor).GetMethod(nameof(AvatarProcessor.ProcessAvatar));
