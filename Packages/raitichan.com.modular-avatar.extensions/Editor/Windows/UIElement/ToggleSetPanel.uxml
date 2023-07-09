@@ -1,10 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
     <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView fixed-pane-initial-dimension="250" name="SplitView">
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ToggleSetListView" binding-path="toggleSets" picking-mode="Ignore" item-height="110" title="ToggleSet" style="min-width: 200px;" />
-        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="ToggleSetView" is-bind-stopping="true" style="min-width: 200px;">
-            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" style="flex-grow: 1;" />
-            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; flex-direction: row;" />
-            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.MaterialReplacePanel name="MaterialReplacePanel" style="flex-grow: 1; flex-direction: row;" />
-        </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleSetContent name="ToggleSetContent" is-bind-stopping="true" style="min-width: 200px;" />
     </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView>
 </ui:UXML>
