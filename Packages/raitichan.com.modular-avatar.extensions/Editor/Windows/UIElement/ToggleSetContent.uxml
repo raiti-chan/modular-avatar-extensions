@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
     <uie:Toolbar style="flex-direction: row;">
-        <uie:ToolbarToggle focusable="false" label="ShowObject" name="ShowObjectTabButton" value="true" />
-        <uie:ToolbarToggle focusable="false" label="BlendShape" name="BlendShapeTabButton" />
-        <uie:ToolbarToggle focusable="false" label="Material" name="MaterialTabButton" />
+        <uie:ToolbarToggle focusable="false" label="ShowObject" name="ShowObjectTabButton" value="true" style="left: 0; margin-left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="BlendShape" name="BlendShapeTabButton" style="left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="Material" name="MaterialTabButton" style="left: 0;" />
     </uie:Toolbar>
     <ui:VisualElement name="EditorPanelContent" style="flex-grow: 1;">
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" style="flex-grow: 1;" />
