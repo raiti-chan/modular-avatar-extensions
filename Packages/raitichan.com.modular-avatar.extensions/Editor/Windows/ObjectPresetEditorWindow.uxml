@@ -11,7 +11,7 @@
             </ui:VisualElement>
         </ui:VisualElement>
         <ui:VisualElement name="Body" style="flex-grow: 1;">
-            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditor style="flex-grow: 1; flex-direction: row;" />
+            <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditor style="flex-grow: 1; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px;" />
         </ui:VisualElement>
         <ui:VisualElement name="Footer" />
     </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>

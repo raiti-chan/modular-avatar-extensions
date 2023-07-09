@@ -8,25 +8,33 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class ToggleSetPanel : VisualElement {
 		private const string UXML_GUID = "9dd14dd985ef24842a7bb001e45e917f";
 
+		private readonly TwoPaneSplitView _splitView;
 		private readonly CustomListView _toggleSetListView;
 		private readonly CustomBindableElement _toggleSetView;
 		private readonly ShowObjectPanel _showObjectPanel;
 		private readonly BlendShapePanel _blendShapePanel;
 		private readonly MaterialReplacePanel _materialReplacePanel;
 
+		public float SplitViewDimension {
+			get => this._splitView.FixedPaneCurrentDimension;
+			set => this._splitView.FixedPaneInitialDimension = value;
+		}
+
 		public ToggleSetPanel() {
 			string uxmlPath = AssetDatabase.GUIDToAssetPath(UXML_GUID);
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._toggleSetListView = this.Q<CustomListView>("ToggleSetListView");
+			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+
+			this._toggleSetListView = this._splitView.Q<CustomListView>("ToggleSetListView");
 			this._toggleSetListView.OnRemove = ToggleSetListViewOnRemove;
 			this._toggleSetListView.MakeItem = () => new ToggleSetElement();
 			this._toggleSetListView.BindItem = this.ToggleSetListViewBindItem;
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
 			this._toggleSetListView.RegisterCallback<CustomBindablePreBindEvent>(ToggleSetListViewPreBind);
 
-			this._toggleSetView = this.Q<CustomBindableElement>("ToggleSetView");
+			this._toggleSetView = this._splitView.Q<CustomBindableElement>("ToggleSetView");
 			this._showObjectPanel = this._toggleSetView.Q<ShowObjectPanel>("ShowObjectPanel");
 			this._blendShapePanel = this._toggleSetView.Q<BlendShapePanel>("BlendShapePanel");
 			this._materialReplacePanel = this._toggleSetView.Q<MaterialReplacePanel>("MaterialReplacePanel");
