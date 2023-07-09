@@ -66,11 +66,37 @@
         <xs:attribute default="false" name="is-bind-stopping" type="xs:boolean" use="optional" />
         <xs:attribute default="" name="title" type="xs:string" use="optional" />
         <xs:attribute default="30" name="item-height" type="xs:int" use="optional" />
+        <xs:attribute default="true" name="can-select" type="xs:boolean" use="optional" />
+        <xs:attribute default="true" name="can-reorder" type="xs:boolean" use="optional" />
+        <xs:attribute default="true" name="can-resize" type="xs:boolean" use="optional" />
         <xs:anyAttribute processContents="lax" />
       </xs:restriction>
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="CustomListView" substitutionGroup="engine:VisualElement" type="CustomListViewType" />
+  <xs:complexType name="ReadOnlyObjectFieldType">
+    <xs:complexContent mixed="false">
+      <xs:restriction base="engine:VisualElementType">
+        <xs:sequence minOccurs="0" maxOccurs="unbounded">
+          <xs:element ref="engine:VisualElement" />
+        </xs:sequence>
+        <xs:attribute default="" name="name" type="xs:string" use="optional" />
+        <xs:attribute default="" name="view-data-key" type="xs:string" use="optional" />
+        <xs:attribute default="Position" name="picking-mode" type="engine:VisualElement_picking-mode_Type" use="optional" />
+        <xs:attribute default="" name="tooltip" type="xs:string" use="optional" />
+        <xs:attribute default="None" name="usage-hints" type="engine:VisualElement_usage-hints_Type" use="optional" />
+        <xs:attribute default="0" name="tabindex" type="xs:int" use="optional" />
+        <xs:attribute default="true" name="focusable" type="xs:boolean" use="optional" />
+        <xs:attribute default="" name="class" type="xs:string" use="optional" />
+        <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
+        <xs:attribute default="" name="style" type="xs:string" use="optional" />
+        <xs:attribute default="" name="binding-path" type="xs:string" use="optional" />
+        <xs:attribute default="" name="label" type="xs:string" use="optional" />
+        <xs:anyAttribute processContents="lax" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="ReadOnlyObjectField" substitutionGroup="engine:VisualElement" type="ReadOnlyObjectFieldType" />
   <xs:complexType name="ToggleButtonType">
     <xs:complexContent mixed="false">
       <xs:restriction base="engine:VisualElementType">
@@ -96,4 +122,31 @@
     </xs:complexContent>
   </xs:complexType>
   <xs:element name="ToggleButton" substitutionGroup="engine:VisualElement" type="ToggleButtonType" />
+  <xs:simpleType name="TwoPaneSplitView_orientation_Type">
+    <xs:restriction base="xs:string">
+      <xs:enumeration value="Horizontal" />
+      <xs:enumeration value="Vertical" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:complexType name="TwoPaneSplitViewType">
+    <xs:complexContent mixed="false">
+      <xs:restriction base="engine:VisualElementType">
+        <xs:attribute default="" name="name" type="xs:string" use="optional" />
+        <xs:attribute default="" name="view-data-key" type="xs:string" use="optional" />
+        <xs:attribute default="Position" name="picking-mode" type="engine:VisualElement_picking-mode_Type" use="optional" />
+        <xs:attribute default="" name="tooltip" type="xs:string" use="optional" />
+        <xs:attribute default="None" name="usage-hints" type="engine:VisualElement_usage-hints_Type" use="optional" />
+        <xs:attribute default="0" name="tabindex" type="xs:int" use="optional" />
+        <xs:attribute default="false" name="focusable" type="xs:boolean" use="optional" />
+        <xs:attribute default="" name="class" type="xs:string" use="optional" />
+        <xs:attribute default="" name="content-container" type="xs:string" use="optional" />
+        <xs:attribute default="" name="style" type="xs:string" use="optional" />
+        <xs:attribute default="0" name="fixed-pane-index" type="xs:int" use="optional" />
+        <xs:attribute default="100" name="fixed-pane-initial-dimension" type="xs:int" use="optional" />
+        <xs:attribute default="Horizontal" name="orientation" type="TwoPaneSplitView_orientation_Type" use="optional" />
+        <xs:anyAttribute processContents="lax" />
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:element name="TwoPaneSplitView" substitutionGroup="engine:VisualElement" type="TwoPaneSplitViewType" />
 </xs:schema>
