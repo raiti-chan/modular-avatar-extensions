@@ -12,23 +12,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class MaterialReplacePanel : VisualElement {
 		private const string UXML_GUID = "8ddbf42a15e949c4c8a31a60b51c90bb";
 
+		private readonly TwoPaneSplitView _splitView;
 		private readonly CustomListView _materialReplaceListView;
 		private readonly CustomBindableElement _materialReplaceView;
 
 		public int ControlLayer { get; set; } = PresetPreviewContext.PRESET_LAYER;
+		
+		public float SplitViewDimension {
+			get => this._splitView.FixedPaneCurrentDimension;
+			set => this._splitView.FixedPaneInitialDimension = value;
+		}
 
 		public MaterialReplacePanel() {
 			string uxmlPath = AssetDatabase.GUIDToAssetPath(UXML_GUID);
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._materialReplaceListView = this.Q<CustomListView>("MaterialReplaceListView");
+			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+
+			this._materialReplaceListView = this._splitView.Q<CustomListView>("MaterialReplaceListView");
 			this._materialReplaceListView.OnAdd = MaterialReplaceListViewOnAdd;
 			this._materialReplaceListView.OnRemove = MaterialReplaceListViewOnRemove;
 			this._materialReplaceListView.MakeItem = MaterialReplaceListViewMakeItem;
 			this._materialReplaceListView.onSelectionChanged += MaterialReplaceListViewOnSelectionChanged;
 
-			this._materialReplaceView = this.Q<CustomBindableElement>("MaterialReplaceView");
+			this._materialReplaceView = this._splitView.Q<CustomBindableElement>("MaterialReplaceView");
 			CustomListView materialListView = this._materialReplaceView.Q<CustomListView>("MaterialListView");
 			materialListView.MakeItem = () => new MaterialReplaceElement();
 			materialListView.BindItem = MaterialListViewBindItem;

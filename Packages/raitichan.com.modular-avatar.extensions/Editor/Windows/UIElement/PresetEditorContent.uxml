@@ -7,8 +7,8 @@
     </uie:Toolbar>
     <ui:VisualElement name="EditorPanelContent" style="flex-grow: 1;">
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" binding-path="showObjects" style="flex-grow: 1;" />
-        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; display: none; flex-direction: row;" />
-        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.MaterialReplacePanel name="MaterialReplacePanel" style="display: none; flex-grow: 1; flex-direction: row;" />
-        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleSetPanel name="ToggleSetPanel" style="display: none; flex-grow: 1; flex-direction: row;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; display: none;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.MaterialReplacePanel name="MaterialReplacePanel" style="display: none; flex-grow: 1;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleSetPanel name="ToggleSetPanel" style="display: none; flex-grow: 1;" />
     </ui:VisualElement>
 </ui:UXML>

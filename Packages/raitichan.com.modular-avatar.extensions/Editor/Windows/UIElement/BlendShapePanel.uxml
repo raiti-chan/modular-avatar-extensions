@@ -1,6 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="BlendShapeListView" binding-path="blendShapes" picking-mode="Ignore" title="SkinnedMeshRenderer" style="flex-grow: 1; border-right-width: 1px; border-left-color: rgb(32, 32, 32); border-right-color: rgb(32, 32, 32); border-top-color: rgb(32, 32, 32); border-bottom-color: rgb(32, 32, 32); flex-basis: 30%;" />
-    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="BlendShapeView" is-bind-stopping="true" style="flex-grow: 1; flex-basis: 70%;">
-        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="WeightListView" title="BlendShapeWeight" item-height="25" is-bind-stopping="false" binding-path="weights" style="flex-grow: 1;" />
-    </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView fixed-pane-initial-dimension="200" name="SplitView">
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="BlendShapeListView" binding-path="blendShapes" picking-mode="Ignore" title="SkinnedMeshRenderer" style="min-width: 200px;" />
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="BlendShapeView" is-bind-stopping="true" style="min-width: 200px;">
+            <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="WeightListView" title="BlendShapeWeight" item-height="25" is-bind-stopping="false" binding-path="weights" style="flex-grow: 1;" />
+        </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
+    </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView>
 </ui:UXML>
