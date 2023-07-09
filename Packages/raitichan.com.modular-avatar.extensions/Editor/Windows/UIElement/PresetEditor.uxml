@@ -1,5 +1,7 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ListView" item-height="70" binding-path="presets" title="Preset" style="flex-grow: 1; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0); border-top-width: 1px; border-right-width: 1px; flex-basis: 30%;" />
-    <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditorContent name="PresetEditorContent" is-bind-stopping="true" style="flex-grow: 1; flex-basis: 70%; border-top-width: 1px; border-left-color: rgb(0, 0, 0); border-right-color: rgb(0, 0, 0); border-top-color: rgb(0, 0, 0); border-bottom-color: rgb(0, 0, 0);" />
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView fixed-pane-initial-dimension="300">
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ListView" item-height="70" binding-path="presets" title="Preset" style="min-width: 200px;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.PresetEditorContent name="PresetEditorContent" is-bind-stopping="true" style="min-width: 200px;" />
+    </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView>
     <uie:IntegerField value="0" name="_DefaultValueField" binding-path="defaultValue" readonly="true" style="display: none;" />
 </ui:UXML>

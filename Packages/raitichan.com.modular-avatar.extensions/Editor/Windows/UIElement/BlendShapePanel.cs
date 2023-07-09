@@ -8,29 +8,36 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
-	// Undoした時にプレビューが同期しない
 	public class BlendShapePanel : VisualElement {
 		private const string UXML_GUID = "8e4dfd5912b768b4f996e76c6f47b96c";
 
+		private readonly TwoPaneSplitView _splitView;
 		private readonly CustomListView _blendShapeListView;
 		private readonly CustomBindableElement _blendShapeView;
 
 		private readonly CustomListView _weightListView;
 
 		public int ControlLayer { get; set; } = PresetPreviewContext.PRESET_LAYER;
+		
+		public float SplitViewDimension {
+			get => this._splitView.FixedPaneCurrentDimension;
+			set => this._splitView.FixedPaneInitialDimension = value;
+		}
 
 		public BlendShapePanel() {
 			string uxmlPath = AssetDatabase.GUIDToAssetPath(UXML_GUID);
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._blendShapeListView = this.Q<CustomListView>("BlendShapeListView");
+			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+
+			this._blendShapeListView = this._splitView.Q<CustomListView>("BlendShapeListView");
 			this._blendShapeListView.OnAdd = BlendShapeListViewOnAdd;
 			this._blendShapeListView.OnRemove = this.BlendShapeListViewOnRemove;
 			this._blendShapeListView.MakeItem = BlendShapeListViewMakeItem;
 			this._blendShapeListView.onSelectionChanged += BlendShapeListViewOnSelectionChanged;
 
-			this._blendShapeView = this.Q<CustomBindableElement>("BlendShapeView");
+			this._blendShapeView = this._splitView.Q<CustomBindableElement>("BlendShapeView");
 			this._weightListView = this._blendShapeView.Q<CustomListView>("WeightListView");
 			this._weightListView.OnAdd = this.WeightListViewOnAdd;
 			this._weightListView.OnRemove = this.WeightListViewOnRemove;
