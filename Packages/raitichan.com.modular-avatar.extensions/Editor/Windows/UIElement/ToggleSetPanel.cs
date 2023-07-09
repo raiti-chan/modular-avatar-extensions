@@ -10,10 +10,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 		private readonly TwoPaneSplitView _splitView;
 		private readonly CustomListView _toggleSetListView;
-		private readonly CustomBindableElement _toggleSetView;
-		private readonly ShowObjectPanel _showObjectPanel;
-		private readonly BlendShapePanel _blendShapePanel;
-		private readonly MaterialReplacePanel _materialReplacePanel;
+		private readonly ToggleSetContent _toggleSetContent;
 
 		public float SplitViewDimension {
 			get => this._splitView.FixedPaneCurrentDimension;
@@ -34,10 +31,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
 			this._toggleSetListView.RegisterCallback<CustomBindablePreBindEvent>(ToggleSetListViewPreBind);
 
-			this._toggleSetView = this._splitView.Q<CustomBindableElement>("ToggleSetView");
-			this._showObjectPanel = this._toggleSetView.Q<ShowObjectPanel>("ShowObjectPanel");
-			this._blendShapePanel = this._toggleSetView.Q<BlendShapePanel>("BlendShapePanel");
-			this._materialReplacePanel = this._toggleSetView.Q<MaterialReplacePanel>("MaterialReplacePanel");
+			this._toggleSetContent = this._splitView.Q<ToggleSetContent>("ToggleSetContent");
 		}
 
 		private void ToggleSetListViewOnRemove(SerializedProperty serializedProperty, int index) {
@@ -61,12 +55,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 		private void ToggleSetListViewOnSelectionChanged(SerializedProperty selected) {
 			if (selected != null) {
-				this._toggleSetView.BindProperty(selected, this._toggleSetView.ObjWrapper);
-				this._blendShapePanel.ControlLayer = this._toggleSetListView.SelectedIndex;
-				this._showObjectPanel.ControlLayer = this._toggleSetListView.SelectedIndex;
-				this._materialReplacePanel.ControlLayer = this._toggleSetListView.SelectedIndex;
+				this._toggleSetContent.BindProperty(selected, this._toggleSetListView.ObjWrapper);
+				this._toggleSetContent.ControlLayer = this._toggleSetListView.SelectedIndex;
 			} else {
-				this._toggleSetView.Unbind();
+				this._toggleSetContent.Unbind();
 			}
 		}
 
