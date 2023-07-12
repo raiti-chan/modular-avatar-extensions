@@ -8,12 +8,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class PresetEditorContent : CustomBindableElement {
 		private const string UXML_GUID = "bedb6463b3877b64a9b5092edf576fed";
 
-		private readonly ToolbarToggle _showObjectTabButton;
+		private readonly ToolbarToggle _enableObjectTabButton;
 		private readonly ToolbarToggle _blendShapeTabButton;
 		private readonly ToolbarToggle _materialTabButton;
 		private readonly ToolbarToggle _toggleObjectTabButton;
 
-		private readonly ShowObjectPanel _showObjectPanel;
+		private readonly EnableObjectPanel _enableObjectPanel;
 		private readonly BlendShapePanel _blendShapePanel;
 		private readonly MaterialReplacePanel _materialReplacePanel;
 		private readonly ToggleSetPanel _toggleSetPanel;
@@ -41,8 +41,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 						throw new ArgumentOutOfRangeException(nameof(value), value, null);
 				}
 
-				this._showObjectTabButton.SetValueWithoutNotify(value == EditorPanelMode.ShowObject);
-				this._showObjectPanel.style.display = this._showObjectTabButton.value ? DisplayStyle.Flex : DisplayStyle.None;
+				this._enableObjectTabButton.SetValueWithoutNotify(value == EditorPanelMode.ShowObject);
+				this._enableObjectPanel.style.display = this._enableObjectTabButton.value ? DisplayStyle.Flex : DisplayStyle.None;
 
 				this._blendShapeTabButton.SetValueWithoutNotify(value == EditorPanelMode.BlendShape);
 				this._blendShapePanel.style.display = this._blendShapeTabButton.value ? DisplayStyle.Flex : DisplayStyle.None;
@@ -64,9 +64,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._showObjectTabButton = this.Q<ToolbarToggle>("ShowObjectTabButton");
-			this._showObjectTabButton.RegisterValueChangedCallback(this.ShowObjectTabButtonClicked);
-			this._showObjectPanel = this.Q<ShowObjectPanel>("ShowObjectPanel");
+			this._enableObjectTabButton = this.Q<ToolbarToggle>("EnableObjectTabButton");
+			this._enableObjectTabButton.RegisterValueChangedCallback(this.EnableObjectTabButtonClicked);
+			this._enableObjectPanel = this.Q<EnableObjectPanel>("EnableObjectPanel");
 
 			this._blendShapeTabButton = this.Q<ToolbarToggle>("BlendShapeTabButton");
 			this._blendShapeTabButton.RegisterValueChangedCallback(this.BlendShapeTabButtonClicked);
@@ -83,9 +83,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this.Mode = EditorPanelMode.ShowObject;
 		}
 
-		private void ShowObjectTabButtonClicked(ChangeEvent<bool> evt) {
+		private void EnableObjectTabButtonClicked(ChangeEvent<bool> evt) {
 			if (evt.newValue == false) {
-				this._showObjectTabButton.SetValueWithoutNotify(true);
+				this._enableObjectTabButton.SetValueWithoutNotify(true);
 			}
 
 			this.Mode = EditorPanelMode.ShowObject;

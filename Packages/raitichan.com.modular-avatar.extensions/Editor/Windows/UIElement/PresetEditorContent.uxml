@@ -1,12 +1,12 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
     <uie:Toolbar style="flex-direction: row;">
-        <uie:ToolbarToggle focusable="false" label="ShowObjects" name="ShowObjectTabButton" value="true" style="margin-left: 0;" />
-        <uie:ToolbarToggle focusable="false" label="BlendShapes" name="BlendShapeTabButton" />
-        <uie:ToolbarToggle focusable="false" label="Materials" name="MaterialTabButton" />
-        <uie:ToolbarToggle focusable="false" label="ToggleSets" name="ToggleSetTabButton" />
+        <uie:ToolbarToggle focusable="false" label="Objects" name="EnableObjectTabButton" value="true" style="margin-left: 0; left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="BlendShapes" name="BlendShapeTabButton" style="left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="Materials" name="MaterialTabButton" style="left: 0;" />
+        <uie:ToolbarToggle focusable="false" label="ToggleSets" name="ToggleSetTabButton" style="left: 0;" />
     </uie:Toolbar>
     <ui:VisualElement name="EditorPanelContent" style="flex-grow: 1;">
-        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ShowObjectPanel name="ShowObjectPanel" binding-path="showObjects" style="flex-grow: 1;" />
+        <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.EnableObjectPanel name="EnableObjectPanel" style="flex-grow: 1;" />
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.BlendShapePanel name="BlendShapePanel" style="flex-grow: 1; display: none;" />
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.MaterialReplacePanel name="MaterialReplacePanel" style="display: none; flex-grow: 1;" />
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleSetPanel name="ToggleSetPanel" style="display: none; flex-grow: 1;" />

@@ -1,0 +1,3 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="EnableObjectListView" binding-path="enableObjects" picking-mode="Ignore" title="Object" style="flex-grow: 1;" />
+</ui:UXML>

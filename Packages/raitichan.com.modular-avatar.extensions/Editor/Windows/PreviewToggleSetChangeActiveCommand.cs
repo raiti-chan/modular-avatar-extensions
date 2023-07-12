@@ -1,4 +1,5 @@
-﻿using raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement;
+﻿using System.Linq;
+using raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEngine;
 
@@ -17,39 +18,54 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 			if (this._toggleSetIndex < 0 || preset.toggleSets.Count <= this._toggleSetIndex) return;
 
 			MAExObjectPreset.ToggleSet toggleSet = preset.toggleSets[this._toggleSetIndex];
-
-			foreach (GameObject toggleSetToggleObject in toggleSet.showObjects) {
-				new PreviewObjectChangeActiveCommand(toggleSetToggleObject, this._toggleSetIndex, this._enable).Process(data, controller, context);
-			}
-
 			if (this._enable) {
-				foreach (MAExObjectPreset.BlendShape toggleSetBlendShape in toggleSet.blendShapes) {
-					SkinnedMeshRenderer skinnedMeshRenderer = toggleSetBlendShape.skinnedMeshRenderer;
-					foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in toggleSetBlendShape.weights) {
-						new PreviewBlendShapeChangeWeightCommand(skinnedMeshRenderer, blendShapeWeight.key, this._toggleSetIndex, blendShapeWeight.value).Process(data, controller, context);
+				foreach (MAExObjectPreset.EnableObject enableObject in toggleSet.enableObjects.Where(obj => obj.gameObject != null)) {
+					PresetPreviewContext.LayerStack<bool> layerStack = context.GetShowObjectLayerStack(enableObject.gameObject);
+					layerStack.AddLayer(this._toggleSetIndex, enableObject.enable);
+					controller.SetActive(enableObject.gameObject, layerStack.GetTopLayer().Value);
+				}
+
+				foreach (MAExObjectPreset.BlendShape blendShape in toggleSet.blendShapes.Where(shape => shape.skinnedMeshRenderer != null)) {
+					SkinnedMeshRenderer skinnedMeshRenderer = blendShape.skinnedMeshRenderer;
+					foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in blendShape.weights) {
+						PresetPreviewContext.LayerStack<float> layerStack = context.GetBlendShapeLayerStack(skinnedMeshRenderer, blendShapeWeight.key);
+						layerStack.AddLayer(this._toggleSetIndex, blendShapeWeight.value);
+						controller.SetBlendShapeWeight(skinnedMeshRenderer, blendShapeWeight.key, layerStack.GetTopLayer().Value);
 					}
 				}
 				
-				foreach (MAExObjectPreset.MaterialReplace toggleSetMaterialReplace in toggleSet.materialReplaces) {
-					Renderer renderer = toggleSetMaterialReplace.renderer;
-					for (int materialIndex = 0; materialIndex < toggleSetMaterialReplace.materials.Count; materialIndex++) {
-						if (toggleSetMaterialReplace.materials[materialIndex] == null) continue;
-						new PreviewMaterialChangeCommand(renderer, materialIndex, this._toggleSetIndex, toggleSetMaterialReplace.materials[materialIndex]).Process(data, controller, context);
+				foreach (MAExObjectPreset.MaterialReplace materialReplace in toggleSet.materialReplaces.Where(replace => replace.renderer != null)) {
+					Renderer renderer = materialReplace.renderer;
+					for (int materialIndex = 0; materialIndex < materialReplace.materials.Count; materialIndex++) {
+						if (materialReplace.materials[materialIndex] == null) continue;
+						PresetPreviewContext.LayerStack<Material> layerStack = context.GetMaterialLayerStack(renderer, materialIndex);
+						layerStack.AddLayer(this._toggleSetIndex, materialReplace.materials[materialIndex]);
+						controller.SetMaterial(renderer, materialIndex, materialReplace.materials[materialIndex]);
 					}
 				}
 			} else {
-				foreach (MAExObjectPreset.BlendShape toggleSetBlendShape in toggleSet.blendShapes) {
-					SkinnedMeshRenderer skinnedMeshRenderer = toggleSetBlendShape.skinnedMeshRenderer;
-					foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in toggleSetBlendShape.weights) {
-						new PreviewBlendShapeResetWeightCommand(skinnedMeshRenderer, blendShapeWeight.key, this._toggleSetIndex).Process(data, controller, context);
+				foreach (MAExObjectPreset.EnableObject enableObject in toggleSet.enableObjects.Where(obj => obj.gameObject != null)) {
+					PresetPreviewContext.LayerStack<bool> layerStack = context.GetShowObjectLayerStack(enableObject.gameObject);
+					layerStack.RemoveLayer(this._toggleSetIndex);
+					controller.SetActive(enableObject.gameObject, layerStack.GetTopLayer().Value);
+				}
+				
+				foreach (MAExObjectPreset.BlendShape blendShape in toggleSet.blendShapes.Where(shape => shape.skinnedMeshRenderer != null)) {
+					SkinnedMeshRenderer skinnedMeshRenderer = blendShape.skinnedMeshRenderer;
+					foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in blendShape.weights) {
+						PresetPreviewContext.LayerStack<float> layerStack = context.GetBlendShapeLayerStack(skinnedMeshRenderer, blendShapeWeight.key);
+						layerStack.RemoveLayer(this._toggleSetIndex);
+						controller.SetBlendShapeWeight(skinnedMeshRenderer, blendShapeWeight.key, layerStack.GetTopLayer().Value);
 					}
 				}
 				
-				foreach (MAExObjectPreset.MaterialReplace toggleSetMaterialReplace in toggleSet.materialReplaces) {
-					Renderer renderer = toggleSetMaterialReplace.renderer;
-					for (int materialIndex = 0; materialIndex < toggleSetMaterialReplace.materials.Count; materialIndex++) {
-						if (toggleSetMaterialReplace.materials[materialIndex] == null) continue;
-						new PreviewMaterialResetCommand(renderer, materialIndex, this._toggleSetIndex).Process(data, controller, context);
+				foreach (MAExObjectPreset.MaterialReplace materialReplace in toggleSet.materialReplaces.Where(replace => replace.renderer != null)) {
+					Renderer renderer = materialReplace.renderer;
+					for (int materialIndex = 0; materialIndex < materialReplace.materials.Count; materialIndex++) {
+						if (materialReplace.materials[materialIndex] == null) continue;
+						PresetPreviewContext.LayerStack<Material> layerStack = context.GetMaterialLayerStack(renderer, materialIndex);
+						layerStack.RemoveLayer(this._toggleSetIndex);
+						controller.SetMaterial(renderer, materialIndex, materialReplace.materials[materialIndex]);
 					}
 				}
 			}
