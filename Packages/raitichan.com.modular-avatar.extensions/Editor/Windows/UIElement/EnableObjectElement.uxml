@@ -1,0 +1,6 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
+    <ui:VisualElement style="flex-grow: 1; align-items: center; flex-direction: row;">
+        <ui:Toggle binding-path="enable" name="EnableToggle" style="margin-top: 3px; margin-left: 6px;" />
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.ReadOnlyObjectField binding-path="gameObject" name="ObjectField" style="flex-shrink: 1; flex-grow: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

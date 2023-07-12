@@ -236,11 +236,18 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			MAExObjectPreset.Preset targetPreset = this.Target.presets[presetIndex];
 			AnimationClip presetClip = new AnimationClip { name = $"{this.Target.parameterName}_{presetIndex}" };
 
-			// 使用するオブジェクトの非表示アニメーション
-			foreach (GameObject allReferencedGameObject in this.Target.GetAllReferencedGameObjects()) {
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(allReferencedGameObject.transform);
+			// 使用するオブジェクトのアニメーション
+			foreach (GameObject hideObject in this.Target.GetDefaultHideObjects()) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(hideObject.transform);
 				AnimationCurve curve = new AnimationCurve();
 				curve.AddKey(new Keyframe(0, 0));
+				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
+			}
+			
+			foreach (GameObject showObject in this.Target.GetDefaultShowObjects()) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(showObject.transform);
+				AnimationCurve curve = new AnimationCurve();
+				curve.AddKey(new Keyframe(0, 1));
 				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
 			}
 			
@@ -274,8 +281,15 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			
 			
 			// プリセットで表示するオブジェクトの表示アニメーション
-			foreach (GameObject targetPresetShowObject in targetPreset.showObjects) {
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(targetPresetShowObject.transform);
+			foreach (GameObject hideObject in targetPreset.GetHideObjects()) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(hideObject.transform);
+				AnimationCurve curve = new AnimationCurve();
+				curve.AddKey(new Keyframe(0, 0));
+				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
+			}
+			
+			foreach (GameObject showObject in targetPreset.GetShowObjects()) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(showObject.transform);
 				AnimationCurve curve = new AnimationCurve();
 				curve.AddKey(new Keyframe(0, 1));
 				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
@@ -307,16 +321,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 					AnimationUtility.SetObjectReferenceCurve(presetClip, binding, keyframes);
 				}
 			}
-
-			// トグルで表示するオブジェクトの非表示アニメーション
-			foreach (GameObject toggleObject in targetPreset.GetAllReferencedToggleGameObject()) {
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(toggleObject.transform);
-				AnimationCurve curve = new AnimationCurve();
-				curve.AddKey(new Keyframe(0, 0));
-				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
-			}
 			
-
 			return presetClip;
 		}
 
@@ -324,10 +329,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		private AnimationClip CreateToggleAnimationClip(int presetIndex, int toggleIndex) {
 			AnimationClip presetClip = new AnimationClip { name = $"{this.Target.parameterName}_{presetIndex}_{toggleIndex}_ON" };
 			
-			foreach (GameObject showObject in this.Target.presets[presetIndex].toggleSets[toggleIndex].showObjects) {
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(showObject.transform);
+			foreach (MAExObjectPreset.EnableObject enableObject in this.Target.presets[presetIndex].toggleSets[toggleIndex].enableObjects) {
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(enableObject.gameObject.transform);
 				AnimationCurve curve = new AnimationCurve();
-				curve.AddKey(new Keyframe(0, 1));
+				curve.AddKey(new Keyframe(0, enableObject.enable ? 1 : 0));
 				presetClip.SetCurve(path, typeof(GameObject), "m_IsActive", curve);
 			}
 			
@@ -400,7 +405,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 						isPrefix = false,
 						syncType = ParameterSyncType.Bool,
 						localOnly = true,
-						saved = true,
+						saved = targetToggle.saved,
 						defaultValue = targetToggle.defaultValue ? 1 : 0
 					});
 				}
@@ -456,16 +461,24 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		}
 
 		private void ApplyDefaultPreset() {
-			foreach (GameObject allReferencedGameObject in this.Target.GetAllReferencedGameObjects()) {
-				allReferencedGameObject.SetActive(false);
+			foreach (GameObject hideObject in this.Target.GetDefaultHideObjects()) {
+				hideObject.SetActive(false);
+			}
+			
+			foreach (GameObject showObject in this.Target.GetDefaultShowObjects()) {
+				showObject.SetActive(true);
 			}
 
 			var targetPreset = this.Target.presets[this.Target.defaultValue];
 			
-			foreach (GameObject showObject in targetPreset.showObjects) {
-				showObject.SetActive(true);
+			foreach (GameObject hideObject in targetPreset.GetHideObjects()) {
+				hideObject.SetActive(false);
 			}
 			
+			foreach (GameObject showObject in targetPreset.GetShowObjects()) {
+				showObject.SetActive(true);
+			}
+
 			foreach (MAExObjectPreset.BlendShape presetBlendShape in targetPreset.blendShapes) {
 				SkinnedMeshRenderer skinnedMeshRenderer = presetBlendShape.skinnedMeshRenderer;
 				foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in presetBlendShape.weights) {
@@ -486,8 +499,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			}
 			
 			foreach (MAExObjectPreset.ToggleSet toggleSet in this.Target.presets[this.Target.defaultValue].toggleSets.Where(toggleSet => toggleSet.defaultValue)) {
-				foreach (GameObject toggleObject in toggleSet.showObjects) {
-					toggleObject.SetActive(true);
+				foreach (MAExObjectPreset.EnableObject enableObject in toggleSet.enableObjects) {
+					enableObject.gameObject.SetActive(enableObject.enable);
 				}
 				
 				foreach (MAExObjectPreset.BlendShape toggleSetBlendShape in toggleSet.blendShapes) {

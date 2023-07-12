@@ -19,8 +19,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 
 			MAExObjectPreset.ToggleSet toggleSet = preset.toggleSets[this._toggleSetIndex];
 
-			foreach (GameObject toggleSetToggleObject in toggleSet.showObjects) {
-				new PreviewObjectRemoveToggleLayerCommand(toggleSetToggleObject, this._toggleSetIndex).Process(data, controller, context);
+			foreach (MAExObjectPreset.EnableObject enableObject in toggleSet.enableObjects) {
+				new PreviewObjectRemoveInToggleLayerCommand(enableObject.gameObject, this._toggleSetIndex).Process(data, controller, context);
 			}
 
 			foreach (MAExObjectPreset.BlendShape toggleSetBlendShape in toggleSet.blendShapes) {

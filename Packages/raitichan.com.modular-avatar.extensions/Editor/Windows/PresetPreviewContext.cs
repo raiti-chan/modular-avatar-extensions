@@ -4,10 +4,18 @@ using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 	public class PresetPreviewContext {
-		public const int NONE_LAYER = -4;
-		public const int USE_OBJECT_BLOCK_LAYER = -3;
-		public const int PRESET_LAYER = -2;
-		public const int TOGGLE_BLOCK_LAYER = -1;
+		/*
+		 * -3 : オブジェクトの素の状態
+		 * -2 : 管理上でのデフォルト							|
+		 * -1 : 指定されたプリセットの生の値					| プリセットアニメーション
+		 *  0 : トグル 0  | トグル0アニメーション
+		 *  1 : トグル 1  | トグル1アニメーション
+		 *  ...
+		 */
+		
+		public const int NONE_LAYER = -3;
+		public const int USE_OBJECT_BLOCK_LAYER = -2;
+		public const int PRESET_LAYER = -1;
 
 		public int SelectPresetIndex { get; set; }
 
@@ -107,6 +115,30 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 				}
 			}
 
+			public LayerValue<TValue> GetLayer(int layer) {
+				LayerValue<TValue> returnVal = new LayerValue<TValue>(NONE_LAYER, default);
+				Stack<LayerValue<TValue>> temp = new Stack<LayerValue<TValue>>();
+				while (this._stack.Count > 0) {
+					int current = this._stack.Peek().Layer;
+					if (current == layer) {
+						returnVal = this._stack.Peek();
+						break;
+					}
+
+					if (current < layer) {
+						break;
+					}
+					
+					temp.Push(this._stack.Pop());
+				}
+
+				while (temp.Count > 0) {
+					this._stack.Push(temp.Pop());
+				}
+
+				return returnVal;
+			}
+
 			public LayerValue<TValue> GetTopLayer() {
 				if (this._stack.Count > 0) {
 					return this._stack.Peek();
@@ -142,8 +174,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 						return $"USE_OBJECT_BLOCK_LAYER : {this.Value}";
 					case PRESET_LAYER:
 						return $"PRESET_LAYER : {this.Value}";
-					case TOGGLE_BLOCK_LAYER:
-						return $"TOGGLE_BLOCK_LAYER : {this.Value}";
 					default:
 						return $"TOGGLE_{this.Layer} : {this.Value}";
 				}

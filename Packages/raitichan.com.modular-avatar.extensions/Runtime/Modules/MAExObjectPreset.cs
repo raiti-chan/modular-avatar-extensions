@@ -6,7 +6,8 @@ using UnityEngine;
 namespace raitichan.com.modular_avatar.extensions.Modules {
 	[DisallowMultipleComponent]
 	[AddComponentMenu("Modular Avatar/MAEx Object Preset")]
-	public class MAExObjectPreset : MAExAnimatorGeneratorModuleBase<MAExObjectPreset> {
+	public class MAExObjectPreset : MAExAnimatorGeneratorModuleBase<MAExObjectPreset>, ISerializationCallbackReceiver {
+		[SerializeField] private int _dataVersion;
 		public string parameterName;
 		public int defaultValue;
 		public bool isInternal;
@@ -14,21 +15,93 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 
 		public List<Preset> presets;
 
-		public IEnumerable<GameObject> GetAllReferencedGameObjects() {
+		/// <summary>
+		/// デフォルトで表示しないオブジェクトを取得
+		/// プリセットで表示設定されているオブジェクト
+		/// トグルで表示設定されているオブジェクト(ただしトグルの属するプリセット上で非表示に設定されている場合を除く)
+		/// </summary>
+		/// <returns></returns>
+		public IEnumerable<GameObject> GetDefaultHideObjects() {
 			HashSet<GameObject> alreadyReturned = new HashSet<GameObject>();
+
 			foreach (Preset preset in this.presets) {
-				foreach (GameObject showObject in preset.showObjects
-					         .Where(showObject => showObject != null && !alreadyReturned.Contains(showObject))) {
-					alreadyReturned.Add(showObject);
-					yield return showObject;
+				Dictionary<GameObject, bool> isEnableInPreset = new Dictionary<GameObject, bool>();
+				foreach (EnableObject enableObject in preset.enableObjects.Where(obj => obj.gameObject != null && !alreadyReturned.Contains(obj.gameObject))) {
+					// alreadyReturnedに含まれていれば、既にHideObjectなので考慮する必要が無い
+					isEnableInPreset[enableObject.gameObject] = enableObject.enable;
+					if (!enableObject.enable) continue;
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
 				}
 
-				foreach (GameObject toggleObject in preset.toggleSets.SelectMany(toggleSet =>
-					         toggleSet.showObjects.Where(toggleObject => toggleObject != null && !alreadyReturned.Contains(toggleObject)))) {
-					alreadyReturned.Add(toggleObject);
-					yield return toggleObject;
+				foreach (EnableObject enableObject in preset.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+					         .Where(obj => obj.enable && obj.gameObject != null && !alreadyReturned.Contains(obj.gameObject))) {
+					// ToggleSet内の表示設定オブジェクトのみを抽出
+					if (isEnableInPreset.TryGetValue(enableObject.gameObject, out bool isEnable)) {
+						// プリセットで非表示に設定されている場合は無視
+						if (!isEnable) continue;
+					}
+
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
 				}
 			}
+		}
+		
+		public IEnumerable<GameObject> GetDefaultShowObjects() {
+			HashSet<GameObject> defaultShowObjects = new HashSet<GameObject>(this.GetDefaultHideObjects());
+			HashSet<GameObject> alreadyReturned = new HashSet<GameObject>();
+			foreach (Preset preset in this.presets) {
+				foreach (EnableObject enableObject in preset.enableObjects.Where(obj => !alreadyReturned.Contains(obj.gameObject) && !defaultShowObjects.Contains(obj.gameObject))) {
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
+				}
+
+				foreach (EnableObject enableObject in preset.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+					         .Where(obj => !alreadyReturned.Contains(obj.gameObject) && !defaultShowObjects.Contains(obj.gameObject))) {
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
+				}
+			}
+		}
+
+		private bool IsDefaultHideObject(GameObject target) {
+			foreach (Preset preset in this.presets) {
+				bool containsInPreset = false;
+				foreach (EnableObject enableObject in preset.enableObjects
+					         .Where(obj => obj.gameObject == target)) {
+					if (enableObject.enable) return true;
+					containsInPreset = true;
+					break;
+				}
+				if (containsInPreset) continue;
+				
+				if (preset.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+				    .Where(obj => obj.gameObject == target)
+				    .Any(enableObject => enableObject.enable)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
+		public bool IsDefaultShowObject(GameObject target) {
+			return !this.IsDefaultHideObject(target);
+		}
+
+		public bool IsContainsObject(GameObject target) {
+			foreach (Preset preset in this.presets) {
+				if (preset.enableObjects.Any(enableObject => enableObject.gameObject == target)) {
+					return true;
+				}
+
+				if (preset.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects).Any(enableObject => enableObject.gameObject == target)) {
+					return true;
+				}
+			}
+
+			return false;
 		}
 
 		public IEnumerable<SkinnedMeshRenderer> GetAllReferencedSkinnedMeshRenderer() {
@@ -122,22 +195,81 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			return this.presets.Select(preset => preset.toggleSets.Count).Max();
 		}
 
+		public void OnBeforeSerialize() { }
+
+		[Obsolete("Is Internal Method")]
+		public void OnAfterDeserialize() {
+			if (this._dataVersion == 1) return;
+			foreach (Preset preset in this.presets) {
+				preset.OnAfterDeserialize();
+			}
+
+			this._dataVersion = 1;
+		}
+
 		[Serializable]
 		public class Preset {
 			public string displayName;
 			public Texture2D menuIcon;
 
-			public List<GameObject> showObjects;
+			public List<EnableObject> enableObjects;
 			public List<BlendShape> blendShapes;
 			public List<MaterialReplace> materialReplaces;
 
 			public List<ToggleSet> toggleSets;
-
-			public IEnumerable<GameObject> GetAllReferencedToggleGameObject() {
+			
+			[SerializeField] private List<GameObject> showObjects;
+			
+			public IEnumerable<GameObject> GetHideObjects() {
+				HashSet<GameObject> isShowSetInToggle = new HashSet<GameObject>(this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+					.Where(obj => !obj.enable && obj.gameObject != null)
+					.Select(obj => obj.gameObject));
+				
 				HashSet<GameObject> alreadyReturned = new HashSet<GameObject>();
-				foreach (GameObject toggleObject in toggleSets.SelectMany(toggleSet => toggleSet.showObjects.Where(toggleObject => toggleObject != null && !alreadyReturned.Contains(toggleObject)))) {
-					alreadyReturned.Add(toggleObject);
-					yield return toggleObject;
+				foreach (EnableObject enableObject in this.enableObjects
+					         .Where(obj => !obj.enable && obj.gameObject != null && !alreadyReturned.Contains(obj.gameObject))) {
+					// トグルで非表示設定がある場合無視
+					if (isShowSetInToggle.Contains(enableObject.gameObject)) continue;
+					// プリセットで非表示設定
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
+				}
+			}
+
+			public bool IsContainsObject(GameObject target) {
+				// ReSharper disable once LoopCanBeConvertedToQuery
+				foreach (EnableObject enableObject in this.enableObjects.Where(obj => obj.gameObject == target)) {
+					return this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+						.Where(obj => obj.gameObject == target)
+						.All(toggleEnableObject => enableObject.enable != toggleEnableObject.enable);
+				}
+				return false;
+			}
+
+			public IEnumerable<GameObject> GetShowObjects() {
+				HashSet<GameObject> isShowSetInToggle = new HashSet<GameObject>(this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+					.Where(obj => obj.enable && obj.gameObject != null)
+					.Select(obj => obj.gameObject));
+
+				HashSet<GameObject> alreadyReturned = new HashSet<GameObject>();
+				foreach (EnableObject enableObject in this.enableObjects
+					         .Where(obj => obj.enable && obj.gameObject != null && !alreadyReturned.Contains(obj.gameObject))) {
+					// トグルで表示設定がある場合無視
+					if (isShowSetInToggle.Contains(enableObject.gameObject)) continue;
+					// プリセットで表示設定されている場合表示
+					alreadyReturned.Add(enableObject.gameObject);
+					yield return enableObject.gameObject;
+				}
+			}
+			
+			public void OnAfterDeserialize() {
+				this.enableObjects = new List<EnableObject>();
+				foreach (GameObject showObject in this.showObjects) {
+					this.enableObjects.Add(new EnableObject { gameObject = showObject, enable = true });
+				}
+
+				foreach (ToggleSet toggleSet in this.toggleSets) {
+					toggleSet.OnAfterDeserialize();
 				}
 			}
 		}
@@ -151,9 +283,24 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			public bool saved;
 			public bool preview;
 
-			public List<GameObject> showObjects;
+			public List<EnableObject> enableObjects;
 			public List<BlendShape> blendShapes;
 			public List<MaterialReplace> materialReplaces;
+			
+			
+			[SerializeField] private List<GameObject> showObjects;
+			public void OnAfterDeserialize() {
+				this.enableObjects = new List<EnableObject>();
+				foreach (GameObject showObject in this.showObjects) {
+					this.enableObjects.Add(new EnableObject { gameObject = showObject, enable = true });
+				}
+			}
+		}
+
+		[Serializable]
+		public struct EnableObject {
+			public GameObject gameObject;
+			public bool enable;
 		}
 
 		[Serializable]

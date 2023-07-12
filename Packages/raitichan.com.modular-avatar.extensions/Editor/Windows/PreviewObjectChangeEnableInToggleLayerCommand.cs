@@ -3,22 +3,21 @@ using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
-	public class PreviewObjectAddToggleLayerCommand : IPresetEditorPreviewCommand {
+	public class PreviewObjectChangeEnableInToggleLayerCommand : IPresetEditorPreviewCommand {
 		private readonly GameObject _gameObject;
 		private readonly int _layer;
+		private readonly bool _enable;
 
-		public PreviewObjectAddToggleLayerCommand(GameObject gameObject, int layer) {
+		public PreviewObjectChangeEnableInToggleLayerCommand(GameObject gameObject, int layer, bool enable) {
 			this._gameObject = gameObject;
 			this._layer = layer;
+			this._enable = enable;
 		}
 
 		public void Process(MAExObjectPreset data, PreviewAvatarController controller, PresetPreviewContext context) {
 			PresetPreviewContext.LayerStack<bool> layerStack = context.GetShowObjectLayerStack(this._gameObject);
-			layerStack.AddLayer(PresetPreviewContext.USE_OBJECT_BLOCK_LAYER, false);
-			layerStack.AddLayer(PresetPreviewContext.TOGGLE_BLOCK_LAYER, false);
-			if (data.presets[context.SelectPresetIndex].toggleSets[this._layer].preview) {
-				layerStack.AddLayer(this._layer, true);
-			}
+			new PreviewObjectRemoveInToggleLayerCommand(this._gameObject, this._layer).Process(data, controller, context);
+			new PreviewObjectAddInToggleLayerCommand(this._gameObject, this._layer, this._enable).Process(data, controller, context);
 			controller.SetActive(this._gameObject, layerStack.GetTopLayer().Value);
 		}
 	}
