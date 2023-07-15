@@ -26,6 +26,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 			this._toggleSetListView = this._splitView.Q<CustomListView>("ToggleSetListView");
 			this._toggleSetListView.OnRemove = ToggleSetListViewOnRemove;
+			this._toggleSetListView.OnUp = ToggleSetListViewOnUp;
+			this._toggleSetListView.OnDown = ToggleSetListViewOnDown;
 			this._toggleSetListView.MakeItem = () => new ToggleSetElement();
 			this._toggleSetListView.BindItem = this.ToggleSetListViewBindItem;
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
@@ -34,15 +36,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetContent = this._splitView.Q<ToggleSetContent>("ToggleSetContent");
 		}
 
-		private void ToggleSetListViewOnRemove(SerializedProperty serializedProperty, int index) {
-			using (PresetChangeEvent pooled = PresetChangeEvent.GetPooled(new PreviewToggleRemoveCommand(index, () => {
-				       serializedProperty.DeleteArrayElementAtIndex(index);
-				       serializedProperty.serializedObject.ApplyModifiedProperties();
-				       this._toggleSetListView.SelectedIndex = -1;
-			       }))) {
+		private void SendToggleUpdateEvent() {
+			using (PresetChangeEvent pooled = PresetChangeEvent.GetPooled(new PreviewReloadPresetCommand())) {
 				pooled.target = this;
 				this.SendEvent(pooled);
 			}
+		}
+
+		private void ToggleSetListViewOnRemove(SerializedProperty serializedProperty, int index) {
+			serializedProperty.DeleteArrayElementAtIndex(index);
+			serializedProperty.serializedObject.ApplyModifiedProperties();
+			this._toggleSetListView.SelectedIndex = -1;
+			this.SendToggleUpdateEvent();
+		}
+
+		private void ToggleSetListViewOnUp(SerializedProperty serializedProperty, int index) {
+			serializedProperty.MoveArrayElement(index, index - 1);
+			serializedProperty.serializedObject.ApplyModifiedProperties();
+			this._toggleSetListView.SelectedIndex = index - 1;
+			this.SendToggleUpdateEvent();
+		}
+		private void ToggleSetListViewOnDown(SerializedProperty serializedProperty, int index) {
+			serializedProperty.MoveArrayElement(index, index + 1);
+			serializedProperty.serializedObject.ApplyModifiedProperties();
+			this._toggleSetListView.SelectedIndex = index + 1;
+			this.SendToggleUpdateEvent();
 		}
 
 		private void ToggleSetListViewBindItem(SerializedProperty serializedProperty, VisualElement element, int i) {
