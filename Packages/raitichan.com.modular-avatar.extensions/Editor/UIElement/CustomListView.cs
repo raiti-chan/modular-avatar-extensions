@@ -232,9 +232,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 				return;
 			}
 
-			this.BindingProperty.MoveArrayElement(selectIndex, selectIndex + 1);
-			this.BindingProperty.serializedObject.ApplyModifiedProperties();
-			this.SelectedIndex = selectIndex + 1;
+
 		}
 
 		private VisualElement ListViewMakeItem() {
