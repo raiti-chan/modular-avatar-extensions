@@ -219,7 +219,9 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			public List<ToggleSet> toggleSets;
 			
 			[SerializeField] private List<GameObject> showObjects;
-			
+
+			public EnableObject this[GameObject target] => this.enableObjects.FirstOrDefault(obj => obj.gameObject == target);
+
 			public IEnumerable<GameObject> GetHideObjects() {
 				HashSet<GameObject> isShowSetInToggle = new HashSet<GameObject>(this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
 					.Where(obj => !obj.enable && obj.gameObject != null)
@@ -236,16 +238,6 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 				}
 			}
 
-			public bool IsContainsObject(GameObject target) {
-				// ReSharper disable once LoopCanBeConvertedToQuery
-				foreach (EnableObject enableObject in this.enableObjects.Where(obj => obj.gameObject == target)) {
-					return this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
-						.Where(obj => obj.gameObject == target)
-						.All(toggleEnableObject => enableObject.enable != toggleEnableObject.enable);
-				}
-				return false;
-			}
-
 			public IEnumerable<GameObject> GetShowObjects() {
 				HashSet<GameObject> isShowSetInToggle = new HashSet<GameObject>(this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
 					.Where(obj => obj.enable && obj.gameObject != null)
@@ -260,6 +252,16 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 					alreadyReturned.Add(enableObject.gameObject);
 					yield return enableObject.gameObject;
 				}
+			}
+			
+			public bool IsContainsObject(GameObject target) {
+				// ReSharper disable once LoopCanBeConvertedToQuery
+				foreach (EnableObject enableObject in this.enableObjects.Where(obj => obj.gameObject == target)) {
+					return this.toggleSets.SelectMany(toggleSet => toggleSet.enableObjects)
+						.Where(obj => obj.gameObject == target)
+						.All(toggleEnableObject => enableObject.enable != toggleEnableObject.enable);
+				}
+				return false;
 			}
 			
 			public void OnAfterDeserialize() {
