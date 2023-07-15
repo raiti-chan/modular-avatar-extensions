@@ -55,7 +55,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 					foreach (MAExObjectPreset.BlendShapeWeight blendShapeWeight in blendShape.weights) {
 						PresetPreviewContext.LayerStack<float> layerStack = context.GetBlendShapeLayerStack(skinnedMeshRenderer, blendShapeWeight.key);
 						layerStack.RemoveLayer(this._toggleSetIndex);
-						controller.SetBlendShapeWeight(skinnedMeshRenderer, blendShapeWeight.key, layerStack.GetTopLayer().Value);
+						PresetPreviewContext.LayerValue<float> topLayer = layerStack.GetTopLayer();
+						if (topLayer.Layer == PresetPreviewContext.NONE_LAYER) {
+							controller.ResetBlendShapeWeight(skinnedMeshRenderer, blendShapeWeight.key);
+						} else {
+							controller.SetBlendShapeWeight(skinnedMeshRenderer, blendShapeWeight.key, topLayer.Value);
+						}
 					}
 				}
 				
@@ -65,7 +70,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 						if (materialReplace.materials[materialIndex] == null) continue;
 						PresetPreviewContext.LayerStack<Material> layerStack = context.GetMaterialLayerStack(renderer, materialIndex);
 						layerStack.RemoveLayer(this._toggleSetIndex);
-						controller.SetMaterial(renderer, materialIndex, materialReplace.materials[materialIndex]);
+						PresetPreviewContext.LayerValue<Material> topLayer = layerStack.GetTopLayer();
+						if (topLayer.Layer == PresetPreviewContext.NONE_LAYER) {
+							controller.ResetMaterial(renderer, materialIndex);
+						} else {
+							controller.SetMaterial(renderer, materialIndex, topLayer.Value);
+						}
 					}
 				}
 			}

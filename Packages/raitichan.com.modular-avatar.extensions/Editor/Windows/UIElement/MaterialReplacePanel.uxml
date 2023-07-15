@@ -1,5 +1,5 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView name="SplitView" fixed-pane-initial-dimension="200">
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView name="SplitView" fixed-pane-initial-dimension="200" picking-mode="Ignore">
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="MaterialReplaceListView" binding-path="materialReplaces" title="Renderer" picking-mode="Ignore" style="min-width: 200px;" />
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="MaterialReplaceView" is-bind-stopping="true" style="min-width: 200px;">
             <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="MaterialListView" title="Material" binding-path="materials" can-select="false" can-reorder="false" can-resize="false" style="flex-grow: 1;" />
