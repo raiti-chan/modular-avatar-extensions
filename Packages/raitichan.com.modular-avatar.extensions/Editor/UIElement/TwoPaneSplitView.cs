@@ -91,7 +91,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			this.styleSheets.Add(_STYLE_SHEET);
 
 			this._content = new VisualElement {
-				name = "unity-content-container"
+				name = "unity-content-container",
+				pickingMode = PickingMode.Ignore
 			};
 			this._content.AddToClassList(_CONTENT_CONTAINER_CLASS_NAME);
 			this.hierarchy.Add(_content);
