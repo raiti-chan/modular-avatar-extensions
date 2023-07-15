@@ -26,7 +26,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 		public void ClearLayerStack() {
 			this._showObjectLayerStack.Clear();
 			this._blendShapeLayerStack.Clear();
-			this._materialLayerStack.Clear();;
+			this._materialLayerStack.Clear();
 		}
 
 		public LayerStack<bool> GetShowObjectLayerStack(GameObject gameObject) {
@@ -115,29 +115,16 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 				}
 			}
 
-			public LayerValue<TValue> GetLayer(int layer) {
-				LayerValue<TValue> returnVal = new LayerValue<TValue>(NONE_LAYER, default);
-				Stack<LayerValue<TValue>> temp = new Stack<LayerValue<TValue>>();
-				while (this._stack.Count > 0) {
-					int current = this._stack.Peek().Layer;
-					if (current == layer) {
-						returnVal = this._stack.Peek();
-						break;
-					}
-
-					if (current < layer) {
-						break;
-					}
-					
-					temp.Push(this._stack.Pop());
-				}
-
+			public bool ContainsLayer(int layer) {
+				Stack<LayerValue<TValue>> temp = new Stack<LayerValue<TValue>>(this._stack);
 				while (temp.Count > 0) {
-					this._stack.Push(temp.Pop());
+					if (temp.Pop().Layer == layer) return true;
 				}
 
-				return returnVal;
+				return false;
 			}
+			
+			
 
 			public LayerValue<TValue> GetTopLayer() {
 				if (this._stack.Count > 0) {

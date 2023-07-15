@@ -22,7 +22,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows {
 			} else {
 				layerStack.RemoveLayer(PresetPreviewContext.USE_OBJECT_BLOCK_LAYER);
 			}
-			
+
+			if (!layerStack.ContainsLayer(PresetPreviewContext.PRESET_LAYER)) {
+				if (data.presets[context.SelectPresetIndex].IsContainsObject(this._gameObject)) {
+					layerStack.AddLayer(PresetPreviewContext.PRESET_LAYER, data.presets[context.SelectPresetIndex][this._gameObject].enable);
+				}
+			}
+
 			PresetPreviewContext.LayerValue<bool> topLayer = layerStack.GetTopLayer();
 			if (topLayer.Layer == PresetPreviewContext.NONE_LAYER) {
 				controller.ResetActive(this._gameObject);
