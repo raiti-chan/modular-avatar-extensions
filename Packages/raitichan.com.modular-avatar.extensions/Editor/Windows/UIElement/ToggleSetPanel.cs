@@ -34,6 +34,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
 			this._toggleSetListView.RegisterCallback<CustomBindablePreBindEvent>(ToggleSetListViewPreBind);
 			this._toggleSetListView.RegisterCallback<ToggleSetPreviewChangeEvent>(this.ToggleSetListViewOnPreviewChanged);
+			this._toggleSetListView.RegisterCallback<ToggleSetDefaultValueChangeEvent>(this.ToggleSetListViewOnDefaultValueChanged);
 			this._toggleSetContent = this._splitView.Q<ToggleSetContent>("ToggleSetContent");
 		}
 
@@ -57,6 +58,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.SelectedIndex = index - 1;
 			this.SendToggleUpdateEvent();
 		}
+
 		private void ToggleSetListViewOnDown(SerializedProperty serializedProperty, int index) {
 			serializedProperty.MoveArrayElement(index, index + 1);
 			serializedProperty.serializedObject.ApplyModifiedProperties();
@@ -90,8 +92,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 			evt.BindingProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
 		}
-		
-		
+
+
 		private void ToggleSetListViewOnPreviewChanged(ToggleSetPreviewChangeEvent evt) {
 			if (evt.NewValue) {
 				SerializedProperty listProperty = this._toggleSetListView.BindingProperty;
@@ -112,12 +114,35 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 						}
 					}
 				}
+
 				listProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
 			}
+
 			using (PresetChangeEvent pooled = PresetChangeEvent.GetPooled(new PreviewToggleSetChangeActiveCommand(evt.ToggleSetIndex, evt.NewValue))) {
 				pooled.target = this;
 				this.SendEvent(pooled);
 			}
+		}
+
+
+		private void ToggleSetListViewOnDefaultValueChanged(ToggleSetDefaultValueChangeEvent evt) {
+			if (!evt.NewValue) return;
+			SerializedProperty listProperty = this._toggleSetListView.BindingProperty;
+			SerializedProperty targetToggleProperty = listProperty.GetArrayElementAtIndex(evt.ToggleSetIndex);
+			SerializedProperty targetTagsProperty = targetToggleProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			HashSet<string> tags = new HashSet<string>(targetTagsProperty.GetArrayElements().ToStringValues());
+			int count = listProperty.arraySize;
+			for (int i = 0; i < count; i++) {
+				if (i == evt.ToggleSetIndex) continue;
+				SerializedProperty toggleSetProperty = listProperty.GetArrayElementAtIndex(i);
+				SerializedProperty tagsProperty = toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+				foreach (string tag in tagsProperty.GetArrayElements().ToStringValues()) {
+					if (!tags.Contains(tag)) continue;
+					toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.defaultValue)).boolValue = false;
+				}
+			}
+
+			listProperty.serializedObject.ApplyModifiedProperties();
 		}
 
 		public new class UxmlFactory : UxmlFactory<ToggleSetPanel, UxmlTraits> { }

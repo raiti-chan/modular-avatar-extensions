@@ -15,10 +15,11 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this.RegisterCallback<ChangeEvent<bool>>(this.PreviewToggleOnChanged, TrickleDown.TrickleDown);
+			this.RegisterCallback<ChangeEvent<bool>>(this.OnPreviewChanged, TrickleDown.TrickleDown);
+			this.RegisterCallback<ChangeEvent<bool>>(this.OnDefaultValueChanged);
 		}
 
-		private void PreviewToggleOnChanged(ChangeEvent<bool> evt) {
+		private void OnPreviewChanged(ChangeEvent<bool> evt) {
 			if (!this.IsBound) return;
 			if (!(evt.target is ToggleButton)) return;
 			this.BindingProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.preview)).boolValue = evt.newValue;
@@ -27,6 +28,17 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 				pooled.target = this;
 				this.SendEvent(pooled);
 			}
+		}
+
+		private void OnDefaultValueChanged(ChangeEvent<bool> evt) {
+			if (!this.IsBound) return;
+			if (!(evt.target is Toggle toggle)) return;
+			if (toggle.name != "DefaultValueToggle") return;
+			using (ToggleSetDefaultValueChangeEvent pooled = ToggleSetDefaultValueChangeEvent.GetPooled(this.ToggleSetIndex, evt.newValue)) {
+				pooled.target = this;
+				this.SendEvent(pooled);
+			}
+			
 		}
 	}
 
@@ -49,6 +61,31 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 
 		public static ToggleSetPreviewChangeEvent GetPooled(int toggleSetIndex, bool newValue) {
 			ToggleSetPreviewChangeEvent evt = EventBase<ToggleSetPreviewChangeEvent>.GetPooled();
+			evt.ToggleSetIndex = toggleSetIndex;
+			evt.NewValue = newValue;
+			return evt;
+		}
+	}
+
+	public class ToggleSetDefaultValueChangeEvent : EventBase<ToggleSetDefaultValueChangeEvent> {
+		public int ToggleSetIndex { get; private set; }
+		public bool NewValue { get; private set; }
+		
+		protected override void Init() {
+			base.Init();
+			this.LocalInit();
+		}
+
+		private void LocalInit() {
+			EventBaseHelper.SetPropagation(this, EventPropagation.Bubbles | EventPropagation.TricklesDown | EventPropagation.Cancellable);
+		}
+
+		public ToggleSetDefaultValueChangeEvent() {
+			this.LocalInit();
+		}
+
+		public static ToggleSetDefaultValueChangeEvent GetPooled(int toggleSetIndex, bool newValue) {
+			ToggleSetDefaultValueChangeEvent evt = EventBase<ToggleSetDefaultValueChangeEvent>.GetPooled();
 			evt.ToggleSetIndex = toggleSetIndex;
 			evt.NewValue = newValue;
 			return evt;
