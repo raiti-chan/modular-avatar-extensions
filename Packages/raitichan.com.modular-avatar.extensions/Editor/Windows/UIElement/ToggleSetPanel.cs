@@ -93,7 +93,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			evt.BindingProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
 		}
 
-
 		private void ToggleSetListViewOnPreviewChanged(ToggleSetPreviewChangeEvent evt) {
 			if (evt.NewValue) {
 				SerializedProperty listProperty = this._toggleSetListView.BindingProperty;
@@ -123,7 +122,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 				this.SendEvent(pooled);
 			}
 		}
-
 
 		private void ToggleSetListViewOnDefaultValueChanged(ToggleSetDefaultValueChangeEvent evt) {
 			if (!evt.NewValue) return;
