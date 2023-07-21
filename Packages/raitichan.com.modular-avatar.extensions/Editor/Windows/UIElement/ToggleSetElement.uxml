@@ -2,7 +2,7 @@
     <ui:VisualElement style="flex-grow: 1; justify-content: center;">
         <ui:TextField picking-mode="Ignore" label="Toggle Name" name="DisplayNameField" binding-path="displayName" />
         <uie:PropertyField label="Menu Icon" binding-path="menuIcon" name="MenuIconField" />
-        <uie:MaskField label="ExclusiveTags" />
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.MultiTagField label="ExclusiveTags" name="ExclusiveTagField" />
         <ui:Toggle label="Default Value" name="DefaultValueToggle" binding-path="defaultValue" />
         <ui:Toggle label="Saved" binding-path="saved" name="SavedToggle" />
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.ToggleButton name="PreviewToggle" label="Preview" binding-path="preview" />

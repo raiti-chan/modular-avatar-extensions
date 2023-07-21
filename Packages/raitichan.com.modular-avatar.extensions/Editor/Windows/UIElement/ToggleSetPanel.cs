@@ -29,7 +29,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.OnRemove = ToggleSetListViewOnRemove;
 			this._toggleSetListView.OnUp = ToggleSetListViewOnUp;
 			this._toggleSetListView.OnDown = ToggleSetListViewOnDown;
-			this._toggleSetListView.MakeItem = () => new ToggleSetElement();
+			this._toggleSetListView.MakeItem = ToggleSetListViewMakeItem;
 			this._toggleSetListView.BindItem = this.ToggleSetListViewBindItem;
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
 			this._toggleSetListView.RegisterCallback<CustomBindablePreBindEvent>(ToggleSetListViewPreBind);
@@ -65,6 +65,26 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.SelectedIndex = index + 1;
 			this.SendToggleUpdateEvent();
 		}
+		
+		private VisualElement ToggleSetListViewMakeItem() {
+			return new ToggleSetElement {
+				CreateExclusiveTags = CreateExclusiveTags
+			};
+		}
+
+		private IEnumerable<string> CreateExclusiveTags() {
+			HashSet<string> alreadyReturned = new HashSet<string>();
+			SerializedProperty toggleSetsProperty = this._toggleSetListView.BindingProperty;
+			foreach (SerializedProperty toggleSetProperty in toggleSetsProperty.GetArrayElements()) {
+				SerializedProperty exclusiveTagsProperty = toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+				foreach (string tag in exclusiveTagsProperty.GetArrayElements().ToStringValues()) {
+					if (alreadyReturned.Contains(tag)) continue;
+					alreadyReturned.Add(tag);
+					yield return tag;
+				}
+			}
+		}
+
 
 		private void ToggleSetListViewBindItem(SerializedProperty serializedProperty, VisualElement element, int i) {
 			if (!(element is ToggleSetElement toggleSetElement)) return;

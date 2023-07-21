@@ -1,4 +1,7 @@
-﻿using raitichan.com.modular_avatar.extensions.Editor.UIElement;
+﻿using System;
+using System.Collections.Generic;
+using raitichan.com.modular_avatar.extensions.Editor.UIElement;
+using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.ReflectionHelper.Unity;
 using UnityEditor;
@@ -8,15 +11,68 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class ToggleSetElement : CustomBindableElement {
 		private const string UXML_GUID = "ba74e8fbd99239c47b9a1e49c653e690";
 
+		private readonly MultiTagField _exclusiveTagField;
+		
+		public Func<IEnumerable<string>> CreateExclusiveTags {
+			set => this._exclusiveTagField.CreateItemSource = value;
+		}
+		
 		public int ToggleSetIndex { get; set; }
-
+		
 		public ToggleSetElement() {
 			string uxmlPath = AssetDatabase.GUIDToAssetPath(UXML_GUID);
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
+			this._exclusiveTagField = this.Q<MultiTagField>("ExclusiveTagField");
+			this._exclusiveTagField.CreateSelectedItemSource = this.ExclusiveTagFieldCreateSelectedItemSource;
+			this._exclusiveTagField.OnNone = this.ExclusiveTagFieldOnNone;
+			this._exclusiveTagField.OnTag = this.ExclusiveTagFieldOnTag;
+			this._exclusiveTagField.OnCreate = this.ExclusiveTagOnCreate;
+
 			this.RegisterCallback<ChangeEvent<bool>>(this.OnPreviewChanged, TrickleDown.TrickleDown);
 			this.RegisterCallback<ChangeEvent<bool>>(this.OnDefaultValueChanged);
+		}
+
+		private IEnumerable<string> ExclusiveTagFieldCreateSelectedItemSource() {
+			SerializedProperty exclusiveTagsProperty = this.BindingProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			foreach (string tag in exclusiveTagsProperty.GetArrayElements().ToStringValues()) {
+				yield return tag;
+			}
+		}
+		
+		private void ExclusiveTagFieldOnNone() {
+			SerializedProperty exclusiveTagsProperty = this.BindingProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			exclusiveTagsProperty.ClearArray();
+			exclusiveTagsProperty.serializedObject.ApplyModifiedProperties();
+		}
+		
+		private void ExclusiveTagFieldOnTag(string tag, bool selected) {
+			SerializedProperty exclusiveTagsProperty = this.BindingProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			int arraySize = exclusiveTagsProperty.arraySize;
+			if (selected) {
+				for (int i = 0; i < arraySize; i++) {
+					SerializedProperty currentProperty = exclusiveTagsProperty.GetArrayElementAtIndex(i);
+					if (currentProperty.stringValue != tag) continue;
+					exclusiveTagsProperty.DeleteArrayElementAtIndex(i);
+					exclusiveTagsProperty.serializedObject.ApplyModifiedProperties();
+					return;
+				}
+			} else {
+				exclusiveTagsProperty.InsertArrayElementAtIndex(arraySize);
+				SerializedProperty addedProperty = exclusiveTagsProperty.GetArrayElementAtIndex(arraySize);
+				addedProperty.stringValue = tag;
+				addedProperty.serializedObject.ApplyModifiedProperties();
+			}
+		}
+		
+		private void ExclusiveTagOnCreate(string tag) {
+			SerializedProperty exclusiveTagsProperty = this.BindingProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			int arraySize = exclusiveTagsProperty.arraySize;
+			exclusiveTagsProperty.InsertArrayElementAtIndex(arraySize);
+			SerializedProperty addedProperty = exclusiveTagsProperty.GetArrayElementAtIndex(arraySize);
+			addedProperty.stringValue = tag;
+			addedProperty.serializedObject.ApplyModifiedProperties();
 		}
 
 		private void OnPreviewChanged(ChangeEvent<bool> evt) {
@@ -38,7 +94,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 				pooled.target = this;
 				this.SendEvent(pooled);
 			}
-			
+		}
+
+		protected override void ExecuteDefaultActionAtTarget(EventBase evt) {
+			base.ExecuteDefaultActionAtTarget(evt);
+			if (evt.eventTypeId == CustomBindableBoundEvent.TypeId()) {
+				this._exclusiveTagField.TextUpdate();
+			}
 		}
 	}
 
