@@ -284,6 +284,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			public bool defaultValue;
 			public bool saved;
 			public bool preview;
+			public List<string> exclusiveTags;
 
 			public List<EnableObject> enableObjects;
 			public List<BlendShape> blendShapes;
