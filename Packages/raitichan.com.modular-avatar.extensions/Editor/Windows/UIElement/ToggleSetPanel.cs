@@ -56,6 +56,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			serializedProperty.MoveArrayElement(index, index - 1);
 			serializedProperty.serializedObject.ApplyModifiedProperties();
 			this._toggleSetListView.SelectedIndex = index - 1;
+			this._toggleSetListView.Refresh();
 			this.SendToggleUpdateEvent();
 		}
 
@@ -63,6 +64,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			serializedProperty.MoveArrayElement(index, index + 1);
 			serializedProperty.serializedObject.ApplyModifiedProperties();
 			this._toggleSetListView.SelectedIndex = index + 1;
+			this._toggleSetListView.Refresh();
 			this.SendToggleUpdateEvent();
 		}
 		
@@ -161,6 +163,23 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			}
 
 			listProperty.serializedObject.ApplyModifiedProperties();
+		}
+
+		protected override void ExecuteDefaultActionAtTarget(EventBase evt) {
+			base.ExecuteDefaultActionAtTarget(evt);
+			
+			if (evt.eventTypeId == AttachToPanelEvent.TypeId()) {
+				Undo.undoRedoPerformed += this.UndoRedoPerformed;
+				return;
+			}
+
+			if (evt.eventTypeId != DetachFromPanelEvent.TypeId()) return;
+			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
+		}
+
+		private void UndoRedoPerformed() {
+			this._toggleSetListView.BindingProperty.serializedObject.Update();
+			this._toggleSetListView.Refresh();
 		}
 
 		public new class UxmlFactory : UxmlFactory<ToggleSetPanel, UxmlTraits> { }

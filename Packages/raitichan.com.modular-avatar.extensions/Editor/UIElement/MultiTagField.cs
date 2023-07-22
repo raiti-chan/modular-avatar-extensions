@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using UnityEditor;
 using UnityEditor.UIElements;
 using UnityEngine;
@@ -9,8 +8,7 @@ using UnityEngine.UIElements;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 	public class MultiTagField : CustomBaseField {
-		private TextElement _textElement;
-		private VisualElement _arrowElement;
+		private readonly TextElement _textElement;
 
 		public Func<IEnumerable<string>> CreateItemSource { get; set; }
 		public Func<IEnumerable<string>> CreateSelectedItemSource { get; set; }
@@ -30,40 +28,11 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			this._textElement.AddToClassList(BasePopupField<int, string>.textUssClassName);
 			this.VisualInput.Add(this._textElement);
 
-			this._arrowElement = new VisualElement {
+			VisualElement arrowElement = new VisualElement {
 				pickingMode = PickingMode.Ignore
 			};
-			this._arrowElement.AddToClassList(BasePopupField<int, string>.arrowUssClassName);
-			this.VisualInput.Add(this._arrowElement);
-		}
-
-		protected override void ExecuteDefaultActionAtTarget(EventBase evt) {
-			base.ExecuteDefaultActionAtTarget(evt);
-			if (evt == null) return;
-			bool flag = false;
-			switch (evt) {
-				case KeyDownEvent keyDownEvent: {
-					if (keyDownEvent.keyCode == KeyCode.Space ||
-					    keyDownEvent.keyCode == KeyCode.KeypadEnter ||
-					    keyDownEvent.keyCode == KeyCode.Return) {
-						flag = true;
-					}
-
-					break;
-				}
-				case MouseDownEvent mouseDownEvent: {
-					if (mouseDownEvent.button == 0 &&
-					    this.VisualInput.ContainsPoint(this.VisualInput.WorldToLocal(mouseDownEvent.mousePosition))) {
-						flag = true;
-					}
-
-					break;
-				}
-			}
-
-			if (!flag) return;
-			this.ShowMenu();
-			evt.StopPropagation();
+			arrowElement.AddToClassList(BasePopupField<int, string>.arrowUssClassName);
+			this.VisualInput.Add(arrowElement);
 		}
 
 		private void ShowMenu() {
@@ -113,6 +82,35 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			if (string.IsNullOrEmpty(newTag)) return;
 			this.OnCreate?.Invoke(newTag);
 			this.TextUpdate();
+		}
+		
+		protected override void ExecuteDefaultActionAtTarget(EventBase evt) {
+			base.ExecuteDefaultActionAtTarget(evt);
+			if (evt == null) return;
+			bool flag = false;
+			switch (evt) {
+				case KeyDownEvent keyDownEvent: {
+					if (keyDownEvent.keyCode == KeyCode.Space ||
+					    keyDownEvent.keyCode == KeyCode.KeypadEnter ||
+					    keyDownEvent.keyCode == KeyCode.Return) {
+						flag = true;
+					}
+
+					break;
+				}
+				case MouseDownEvent mouseDownEvent: {
+					if (mouseDownEvent.button == 0 &&
+					    this.VisualInput.ContainsPoint(this.VisualInput.WorldToLocal(mouseDownEvent.mousePosition))) {
+						flag = true;
+					}
+
+					break;
+				}
+			}
+
+			if (!flag) return;
+			this.ShowMenu();
+			evt.StopPropagation();
 		}
 
 		private class TagFieldTextElement : TextElement {
