@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq.Expressions;
 using System.Reflection;
+using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 	public static class ExpressionTreeUtils {
@@ -76,11 +77,27 @@ namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 			return expression.Compile();
 		}
 
+		public static Action<TInstance> CreatePublicInstanceMethodCallAction<TInstance>(string methodName, Type tInstance = null) {
+			Type type = To<TInstance>(tInstance);
+			MethodInfo methodInfo = type.GetMethod(methodName, BindingFlags.Public | BindingFlags.Instance);
+			if (methodInfo == null) {
+				throw new NullReferenceException($"Not Found : {type.Name}.{methodName}()");
+			}
+
+			ParameterExpression instanceParameter = Expression.Parameter(typeof(TInstance), "instance");
+			Expression instanceTypeAs = Convert(instanceParameter, tInstance);
+
+			Expression<Action<TInstance>> expression = Expression.Lambda<Action<TInstance>>(
+				Expression.Call(instanceTypeAs, methodInfo),
+				instanceParameter);
+			return expression.Compile();
+		}
+
 		public static Action<TInstance, TArg0> CreateNonPublicInstanceMethodCallAction<TInstance, TArg0>(string methodName, Type tInstance = null, Type tArg0 = null) {
 			Type type = tInstance ?? typeof(TInstance);
 			MethodInfo methodInfo = type.GetMethod(methodName, BindingFlags.NonPublic | BindingFlags.Instance);
 			if (methodInfo == null) {
-				throw new NullReferenceException($"Not Found : {type.Name}.{methodName}()");
+				throw new NullReferenceException($"Not Found : {type.Name}.{methodName}({tArg0?.Name ?? typeof(TArg0).Name})");
 			}
 
 			ParameterExpression instanceParameter = Expression.Parameter(typeof(TInstance), "instance");
@@ -119,7 +136,7 @@ namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 		public static Action<TInstance, TArg0> CreateNonPublicInstancePropertyGetFunction<TInstance, TArg0>(string propertyName, Type tInstance = null, Type tArg0 = null) {
 			Type type = tInstance ?? typeof(TInstance);
 			Type valueType = tArg0 ?? typeof(TArg0);
-			
+
 			PropertyInfo propertyInfo = type.GetProperty(propertyName, BindingFlags.NonPublic | BindingFlags.Instance);
 			if (propertyInfo == null) {
 				throw new NullReferenceException($"Not Found : {type.Name}.{propertyName}.set({valueType.Name})");
@@ -130,12 +147,16 @@ namespace raitichan.com.modular_avatar.extensions.ReflectionHelper {
 
 			Expression instanceTypeAs = Convert(instanceParameter, tInstance);
 			Expression arg0TypeAs = Convert(arg0Parameter, tArg0);
-			
+
 
 			Expression<Action<TInstance, TArg0>> expression = Expression.Lambda<Action<TInstance, TArg0>>(
 				Expression.Assign(Expression.Property(instanceTypeAs ?? instanceParameter, propertyInfo), arg0TypeAs ?? arg0Parameter),
 				instanceParameter, arg0Parameter);
 			return expression.Compile();
+		}
+
+		private static Type To<T>(Type type) {
+			return type ?? typeof(T);
 		}
 
 		private static Expression Convert(Expression parameter, Type to) {

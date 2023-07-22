@@ -19,7 +19,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 		public void PreProcess(GameObject avatarGameObject) {
 			if (string.IsNullOrEmpty(this.Target.parameterName)) {
-				this.Target.parameterName = GUID.Generate().ToString();
+				this.Target.parameterName = this.Target.name;
 			}
 		}
 
@@ -194,6 +194,22 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 						name = this.CreateSyncParameterName(parameterIndex),
 						value = 1
 					});
+					
+					// 排他的処理の追加
+					HashSet<string> tags = new HashSet<string>(targetPreset.toggleSets[parameterIndex].exclusiveTags);
+					if (tags.Count != 0) {
+						foreach (string tag in tags) {
+							for (int index = 0; index < targetPreset.toggleSets.Count; index++) {
+								if (index == parameterIndex) continue;
+								if (!targetPreset.toggleSets[index].exclusiveTags.Contains(tag)) continue;
+								onDriver.parameters.Add(new VRC_AvatarParameterDriver.Parameter {
+									type = VRC_AvatarParameterDriver.ChangeType.Set,
+									name = this.CreateLocalParameterName(presetIndex, index),
+									value = 0
+								});
+							}
+						}
+					}
 
 					VRCAvatarParameterDriver offDriver = offStateLocal.AddStateMachineBehaviour<VRCAvatarParameterDriver>();
 					offDriver.localOnly = false;

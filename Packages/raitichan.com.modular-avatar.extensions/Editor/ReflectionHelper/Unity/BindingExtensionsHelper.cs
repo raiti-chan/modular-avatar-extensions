@@ -98,6 +98,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity 
 		public SerializedObjectUpdateWrapperHelper(SerializedObject so) {
 			if (_serializedObjectUpdateWrapperConstructor != null) {
 				this.SerializedObjectUpdateWrapper = _serializedObjectUpdateWrapperConstructor(so);
+				return;
 			}
 
 			ConstructorInfo constructorInfo = Type.GetConstructor(new[] { typeof(SerializedObject) });
@@ -105,6 +106,18 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity 
 
 			_serializedObjectUpdateWrapperConstructor = ExpressionTreeUtils.CreateConstructor<SerializedObject, object>(constructorInfo);
 			this.SerializedObjectUpdateWrapper = _serializedObjectUpdateWrapperConstructor(so);
+		}
+
+		private const string UPDATE_IF_NECESSARY_METHOD_NAME = "UpdateIfNecessary";
+		private static Action<object> _updateIfNecessaryMethod;
+		public void UpdateIfNecessary() {
+			if (_updateIfNecessaryMethod != null) {
+				_updateIfNecessaryMethod(this.SerializedObjectUpdateWrapper);
+				return;
+			}
+
+			_updateIfNecessaryMethod = ExpressionTreeUtils.CreatePublicInstanceMethodCallAction<object>(UPDATE_IF_NECESSARY_METHOD_NAME, Type);
+			_updateIfNecessaryMethod(this.SerializedObjectUpdateWrapper);
 		}
 
 		#endregion
