@@ -1,4 +1,5 @@
-﻿using raitichan.com.modular_avatar.extensions.Editor.UIElement;
+﻿using System.Collections.Generic;
+using raitichan.com.modular_avatar.extensions.Editor.UIElement;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
@@ -28,11 +29,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			this._toggleSetListView.OnRemove = ToggleSetListViewOnRemove;
 			this._toggleSetListView.OnUp = ToggleSetListViewOnUp;
 			this._toggleSetListView.OnDown = ToggleSetListViewOnDown;
-			this._toggleSetListView.MakeItem = () => new ToggleSetElement();
+			this._toggleSetListView.MakeItem = ToggleSetListViewMakeItem;
 			this._toggleSetListView.BindItem = this.ToggleSetListViewBindItem;
 			this._toggleSetListView.onSelectionChanged += this.ToggleSetListViewOnSelectionChanged;
 			this._toggleSetListView.RegisterCallback<CustomBindablePreBindEvent>(ToggleSetListViewPreBind);
-
+			this._toggleSetListView.RegisterCallback<ToggleSetPreviewChangeEvent>(this.ToggleSetListViewOnPreviewChanged);
+			this._toggleSetListView.RegisterCallback<ToggleSetDefaultValueChangeEvent>(this.ToggleSetListViewOnDefaultValueChanged);
 			this._toggleSetContent = this._splitView.Q<ToggleSetContent>("ToggleSetContent");
 		}
 
@@ -54,14 +56,37 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			serializedProperty.MoveArrayElement(index, index - 1);
 			serializedProperty.serializedObject.ApplyModifiedProperties();
 			this._toggleSetListView.SelectedIndex = index - 1;
+			this._toggleSetListView.Refresh();
 			this.SendToggleUpdateEvent();
 		}
+
 		private void ToggleSetListViewOnDown(SerializedProperty serializedProperty, int index) {
 			serializedProperty.MoveArrayElement(index, index + 1);
 			serializedProperty.serializedObject.ApplyModifiedProperties();
 			this._toggleSetListView.SelectedIndex = index + 1;
+			this._toggleSetListView.Refresh();
 			this.SendToggleUpdateEvent();
 		}
+		
+		private VisualElement ToggleSetListViewMakeItem() {
+			return new ToggleSetElement {
+				CreateExclusiveTags = CreateExclusiveTags
+			};
+		}
+
+		private IEnumerable<string> CreateExclusiveTags() {
+			HashSet<string> alreadyReturned = new HashSet<string>();
+			SerializedProperty toggleSetsProperty = this._toggleSetListView.BindingProperty;
+			foreach (SerializedProperty toggleSetProperty in toggleSetsProperty.GetArrayElements()) {
+				SerializedProperty exclusiveTagsProperty = toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+				foreach (string tag in exclusiveTagsProperty.GetArrayElements().ToStringValues()) {
+					if (alreadyReturned.Contains(tag)) continue;
+					alreadyReturned.Add(tag);
+					yield return tag;
+				}
+			}
+		}
+
 
 		private void ToggleSetListViewBindItem(SerializedProperty serializedProperty, VisualElement element, int i) {
 			if (!(element is ToggleSetElement toggleSetElement)) return;
@@ -88,6 +113,73 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			}
 
 			evt.BindingProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+		}
+
+		private void ToggleSetListViewOnPreviewChanged(ToggleSetPreviewChangeEvent evt) {
+			if (evt.NewValue) {
+				SerializedProperty listProperty = this._toggleSetListView.BindingProperty;
+				SerializedProperty targetToggleProperty = listProperty.GetArrayElementAtIndex(evt.ToggleSetIndex);
+				SerializedProperty targetTagsProperty = targetToggleProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+				HashSet<string> tags = new HashSet<string>(targetTagsProperty.GetArrayElements().ToStringValues());
+				int count = listProperty.arraySize;
+				for (int i = 0; i < count; i++) {
+					if (i == evt.ToggleSetIndex) continue;
+					SerializedProperty toggleSetProperty = listProperty.GetArrayElementAtIndex(i);
+					SerializedProperty tagsProperty = toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+					foreach (string tag in tagsProperty.GetArrayElements().ToStringValues()) {
+						if (!tags.Contains(tag)) continue;
+						toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.preview)).boolValue = false;
+						using (PresetChangeEvent pooled = PresetChangeEvent.GetPooled(new PreviewToggleSetChangeActiveCommand(i, false))) {
+							pooled.target = this;
+							this.SendEvent(pooled);
+						}
+					}
+				}
+
+				listProperty.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+			}
+
+			using (PresetChangeEvent pooled = PresetChangeEvent.GetPooled(new PreviewToggleSetChangeActiveCommand(evt.ToggleSetIndex, evt.NewValue))) {
+				pooled.target = this;
+				this.SendEvent(pooled);
+			}
+		}
+
+		private void ToggleSetListViewOnDefaultValueChanged(ToggleSetDefaultValueChangeEvent evt) {
+			if (!evt.NewValue) return;
+			SerializedProperty listProperty = this._toggleSetListView.BindingProperty;
+			SerializedProperty targetToggleProperty = listProperty.GetArrayElementAtIndex(evt.ToggleSetIndex);
+			SerializedProperty targetTagsProperty = targetToggleProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+			HashSet<string> tags = new HashSet<string>(targetTagsProperty.GetArrayElements().ToStringValues());
+			int count = listProperty.arraySize;
+			for (int i = 0; i < count; i++) {
+				if (i == evt.ToggleSetIndex) continue;
+				SerializedProperty toggleSetProperty = listProperty.GetArrayElementAtIndex(i);
+				SerializedProperty tagsProperty = toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.exclusiveTags));
+				foreach (string tag in tagsProperty.GetArrayElements().ToStringValues()) {
+					if (!tags.Contains(tag)) continue;
+					toggleSetProperty.FindPropertyRelative(nameof(MAExObjectPreset.ToggleSet.defaultValue)).boolValue = false;
+				}
+			}
+
+			listProperty.serializedObject.ApplyModifiedProperties();
+		}
+
+		protected override void ExecuteDefaultActionAtTarget(EventBase evt) {
+			base.ExecuteDefaultActionAtTarget(evt);
+			
+			if (evt.eventTypeId == AttachToPanelEvent.TypeId()) {
+				Undo.undoRedoPerformed += this.UndoRedoPerformed;
+				return;
+			}
+
+			if (evt.eventTypeId != DetachFromPanelEvent.TypeId()) return;
+			Undo.undoRedoPerformed -= this.UndoRedoPerformed;
+		}
+
+		private void UndoRedoPerformed() {
+			this._toggleSetListView.BindingProperty.serializedObject.Update();
+			this._toggleSetListView.Refresh();
 		}
 
 		public new class UxmlFactory : UxmlFactory<ToggleSetPanel, UxmlTraits> { }

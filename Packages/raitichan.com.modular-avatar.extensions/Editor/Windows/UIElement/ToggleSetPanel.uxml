@@ -1,6 +1,6 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
     <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView fixed-pane-initial-dimension="250" name="SplitView">
-        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ToggleSetListView" binding-path="toggleSets" item-height="110" title="ToggleSet" style="min-width: 200px;" />
+        <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="ToggleSetListView" binding-path="toggleSets" item-height="130" title="ToggleSet" style="min-width: 200px;" />
         <raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement.ToggleSetContent name="ToggleSetContent" is-bind-stopping="true" style="min-width: 200px;" />
     </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView>
 </ui:UXML>

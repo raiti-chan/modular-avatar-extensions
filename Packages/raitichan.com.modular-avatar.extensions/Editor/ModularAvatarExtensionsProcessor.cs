@@ -13,6 +13,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 	public class ModularAvatarExtensionsProcessor {
 		static ModularAvatarExtensionsProcessor() {
 			MAPatcher.PreProcess += ProcessAvatar;
+			MAPatcher.PostProcess += PostProcessAvatar;
 		}
 
 		private static MeshRendererOverrideHook _meshRendererOverrideHook;
@@ -24,6 +25,14 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 
 			_animatorGeneratorHook = new AnimatorGeneratorHook();
 			_animatorGeneratorHook.OnProcessAvatar(avatarGameObject);
+		}
+
+		private static MMDSetupHook _mmdSetupHook;
+
+		private static void PostProcessAvatar(GameObject avatarGameObject) {
+			_mmdSetupHook = new MMDSetupHook();
+			_mmdSetupHook.OnProcessAvatar(avatarGameObject);
+
 		}
 	}
 
@@ -39,6 +48,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 		}
 
 		private static readonly ConstructorInfo buildContextConstructor = AccessTools.Constructor(AccessTools.TypeByName("BuildContext"), new[] { typeof(VRCAvatarDescriptor) });
+		private static readonly FieldInfo loadFieldAfterProcessing = AccessTools.Field(typeof(AvatarProcessor), "AfterProcessing");
 		private static bool isBuildContextConstructor;
 		private static bool isInsertPosition;
 
@@ -62,15 +72,25 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 					isBuildContextConstructor = true;
 				}
 
+				if (instruction.LoadsField(loadFieldAfterProcessing)) {
+					yield return new CodeInstruction(OpCodes.Ldloc_0);
+					yield return CodeInstruction.Call(typeof(MAPatcher), nameof(InvokePostProcess), new []{typeof(VRCAvatarDescriptor)});
+				}
+
 
 				yield return instruction;
 			}
 		}
 
 		public static event Action<GameObject> PreProcess;
+		public static event Action<GameObject> PostProcess;
 
 		public static void InvokePreProcess(VRCAvatarDescriptor avatar) {
 			PreProcess?.Invoke(avatar.gameObject);
+		}
+
+		public static void InvokePostProcess(VRCAvatarDescriptor avatar) {
+			PostProcess?.Invoke(avatar.gameObject);
 		}
 	}
 }
