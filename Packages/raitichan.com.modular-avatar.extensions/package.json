@@ -1,7 +1,7 @@
 {
   "name": "raitichan.com.modular-avatar.extensions",
   "displayName": "Modular Avatar Extensions",
-  "version": "1.1.0-bata.6",
+  "version": "1.1.0-bata.7",
   "unity": "2019.4",
   "description": "Extend Modular Avatar and add various modules.",
   "author": {
@@ -9,7 +9,7 @@
 	  "email": "",
 	  "url": "https://github.com/raiti-chan"
   },
-  "url": "https://github.com/raiti-chan/modular-avatar-extensions/releases/download/1.1.0-bata.6/raitichan.com.modular-avatar.extensions-1.1.0-bata.6.zip",
+  "url": "https://github.com/raiti-chan/modular-avatar-extensions/releases/download/1.1.0-bata.7/raitichan.com.modular-avatar.extensions-1.1.0-bata.7.zip",
   "repo": "https://raw.githubusercontent.com/raiti-chan/modular-avatar-extensions/master/vpm.json",
   "vpmDependencies": {
     "com.vrchat.avatars": ">=3.2.0",
