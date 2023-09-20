@@ -456,6 +456,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				presetMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.SubMenu;
 				presetMenuItem.MenuSource = SubmenuSource.Children;
 
+				if (targetPreset.toggleSets.Count == 0) {
+					presetMenuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+					presetMenuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter { name = this.Target.parameterName };
+					presetMenuItem.Control.value = presetIndex;
+					continue;
+				}
+
 				GameObject presetEnableMenuItemObject = new GameObject(targetPreset.displayName);
 				presetEnableMenuItemObject.transform.SetParent(presetMenuItemObject.transform);
 				ModularAvatarMenuItem presetEnableMenuItem = presetEnableMenuItemObject.AddComponent<ModularAvatarMenuItem>();
