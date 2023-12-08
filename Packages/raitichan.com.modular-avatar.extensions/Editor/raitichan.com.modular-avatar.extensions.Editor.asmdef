@@ -3,6 +3,7 @@
     "references": [
         "raitichan.com.modular-avatar.extensions",
         "VRC.SDK3A",
+        "nadena.dev.ndmf",
         "nadena.dev.modular-avatar.core",
         "nadena.dev.modular-avatar.core.editor"
     ],

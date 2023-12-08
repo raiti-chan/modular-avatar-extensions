@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
+using nadena.dev.ndmf;
 using raitichan.com.modular_avatar.extensions.Editor.UnityUtils;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
@@ -12,19 +13,18 @@ using VRC.SDKBase;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class ObjectPresetFactory : IRuntimeAnimatorFactory<MAExObjectPreset> {
+	public class ObjectPresetFactory : ControllerFactoryBase<MAExObjectPreset> {
 		private static readonly AnimationClip _EMPTY_CLIP = AssetDatabase.LoadAssetAtPath<AnimationClip>(AssetDatabase.GUIDToAssetPath("a62a55da1646ad240a9d6c4344484333"));
 
-		public MAExObjectPreset Target { get; set; }
-
-		public void PreProcess(GameObject avatarGameObject) {
+		public override void PreProcess(BuildContext context) {
 			if (string.IsNullOrEmpty(this.Target.parameterName)) {
 				this.Target.parameterName = this.Target.name;
 			}
 		}
 
-		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = MAExUtils.CreateAnimator();
+		public override RuntimeAnimatorController CreateController(BuildContext context) {
+			AnimatorController controller = new AnimatorController();
+			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 			this.AddAnimatorParameter(controller);
 			this.CreatePresetSelectLayer(controller);
 			int useParameterCount = this.Target.GetSyncedToggleParameterUseCount();
@@ -34,9 +34,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 			return controller;
 		}
-		
-		
-		public void PostProcess(GameObject avatarGameObject) {
+
+		public override void PostProcess(BuildContext context) {
 			this.CreateParameter();
 			this.CreateMenu();
 			this.ApplyDefaultPreset();

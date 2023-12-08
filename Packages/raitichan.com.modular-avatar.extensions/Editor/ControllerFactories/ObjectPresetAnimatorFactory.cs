@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
+using nadena.dev.ndmf;
 using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.Serializable;
@@ -11,7 +12,7 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class ObjectPresetAnimatorFactory : IRuntimeAnimatorFactory<MAExObjectPresetAnimatorGenerator> {
+	public class ObjectPresetAnimatorFactory : ControllerFactoryBase<MAExObjectPresetAnimatorGenerator> {
 		private static readonly Texture2D _moreIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(
 			"Packages/nadena.dev.modular-avatar/Runtime/Icons/Icon_More_A.png"
 		);
@@ -19,13 +20,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		private static readonly Texture2D _folderIcon = AssetDatabase.LoadAssetAtPath<Texture2D>(
 			"Packages/com.vrchat.avatars/Samples/AV3 Demo Assets/Expressions Menu/Icons/item_folder.png"
 		);
-
-		public MAExObjectPresetAnimatorGenerator Target { get; set; }
-
+		
 		private readonly HashSet<GameObject> _presetObjects = new HashSet<GameObject>();
 		private readonly Dictionary<SkinnedMeshRenderer, HashSet<int>> _usedBlendShapeIndexesDictionary = new Dictionary<SkinnedMeshRenderer, HashSet<int>>();
 
-		public void PreProcess(GameObject avatarGameObject) {
+
+		public override void PreProcess(BuildContext context) {
 			// オンオフの切り替わるオブジェクト一覧の取得
 			this._presetObjects.Clear();
 			IEnumerable<GameObject> presetObjects = this.Target.presetData.SelectMany(presetData => presetData.enableObjects);
@@ -49,9 +49,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			}
 		}
 
-		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = MAExUtils.CreateAnimator();
-
+		public override RuntimeAnimatorController CreateController(BuildContext context) {
+			AnimatorController controller = new AnimatorController();
+			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 
 			// プリセットアニメーションの生成
 			AnimationClip[] presetClips = new AnimationClip[this.Target.presetData.Count];
@@ -153,7 +153,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			return controller;
 		}
 
-		public void PostProcess(GameObject avatarGameObject) {
+		public override void PostProcess(BuildContext context) {
 			GameObject targetObject = this.Target.gameObject;
 			ModularAvatarMenuInstaller menuInstaller = targetObject.GetComponent<ModularAvatarMenuInstaller>();
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
@@ -230,6 +230,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				}
 			}
 		}
+
+
 
 		private VRCExpressionsMenu CreatePageMenu(VRCExpressionsMenu parent) {
 			VRCExpressionsMenu pageMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();

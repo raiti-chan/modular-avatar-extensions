@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using nadena.dev.modular_avatar.core;
+using nadena.dev.ndmf;
 using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.Serializable;
@@ -11,12 +12,10 @@ using VRC.SDK3.Avatars.ScriptableObjects;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class ToggleAnimatorFactory : IRuntimeAnimatorFactory<MAExToggleAnimatorGenerator> {
-		public MAExToggleAnimatorGenerator Target { get; set; }
-
+	public class ToggleAnimatorFactory : ControllerFactoryBase<MAExToggleAnimatorGenerator> {
 		private readonly List<BlendShapeData> _blendShapeData = new List<BlendShapeData>();
-
-		public void PreProcess(GameObject avatarGameObject) {
+		
+		public override void PreProcess(BuildContext context) {
 			this._blendShapeData.Clear();
 			this._blendShapeData.AddRange(BlendShapeData.GetAllSkinnedMeshRenderer(this.Target.blendShapeDataList)
 				.Select(renderer => new BlendShapeData {
@@ -25,8 +24,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				}));
 		}
 
-		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = MAExUtils.CreateAnimator();
+		public override RuntimeAnimatorController CreateController(BuildContext context) {
+			AnimatorController controller = new AnimatorController();
+			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 			string path = MAExAnimatorFactoryUtils.GetBindingPath(this.Target.transform);
 			if (this.Target.GetComponent<ModularAvatarBoneProxy>() is ModularAvatarBoneProxy boneProxy) {
 				// BoneProxyがあった場合BoneProxyの参照先をパスにする
@@ -57,20 +57,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			return controller;
 		}
 
-		private void AddBlendShapeCurve(AnimationClip clip, bool isDefault) {
-			foreach (BlendShapeData blendShapeData in this._blendShapeData) {
-				SkinnedMeshRenderer renderer = blendShapeData.skinnedMeshRenderer;
-				string path = MAExAnimatorFactoryUtils.GetBindingPath(renderer.transform);
-				foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWight in blendShapeData.blendShapeIndexAndWeights) {
-					string blendShapeName = $"blendShape.{renderer.sharedMesh.GetBlendShapeName(indexAndWight.index)}";
-					AnimationCurve curve = new AnimationCurve();
-					curve.AddKey(new Keyframe(0, isDefault ? renderer.GetBlendShapeWeight(indexAndWight.index) : indexAndWight.weight));
-					clip.SetCurve(path, typeof(SkinnedMeshRenderer), blendShapeName, curve);
-				}
-			}
-		}
-
-		public void PostProcess(GameObject avatarGameObject) {
+		public override void PostProcess(BuildContext context) {
 			GameObject targetObject = this.Target.gameObject;
 			ModularAvatarMenuInstaller menuInstaller = targetObject.GetComponent<ModularAvatarMenuInstaller>();
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
@@ -99,5 +86,20 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 
 			// ブレンドシェイプは、現在の状態をデフォルトとするのでいらない
 		}
+
+
+		private void AddBlendShapeCurve(AnimationClip clip, bool isDefault) {
+			foreach (BlendShapeData blendShapeData in this._blendShapeData) {
+				SkinnedMeshRenderer renderer = blendShapeData.skinnedMeshRenderer;
+				string path = MAExAnimatorFactoryUtils.GetBindingPath(renderer.transform);
+				foreach (BlendShapeData.BlendShapeIndexAndWeight indexAndWight in blendShapeData.blendShapeIndexAndWeights) {
+					string blendShapeName = $"blendShape.{renderer.sharedMesh.GetBlendShapeName(indexAndWight.index)}";
+					AnimationCurve curve = new AnimationCurve();
+					curve.AddKey(new Keyframe(0, isDefault ? renderer.GetBlendShapeWeight(indexAndWight.index) : indexAndWight.weight));
+					clip.SetCurve(path, typeof(SkinnedMeshRenderer), blendShapeName, curve);
+				}
+			}
+		}
+
 	}
 }

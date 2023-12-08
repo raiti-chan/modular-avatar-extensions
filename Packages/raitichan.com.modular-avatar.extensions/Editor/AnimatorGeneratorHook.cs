@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using nadena.dev.modular_avatar.core;
+using nadena.dev.ndmf;
+using raitichan.com.modular_avatar.extensions.Editor.ControllerFactories;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEngine;
 
@@ -8,17 +9,19 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 	internal class AnimatorGeneratorHook {
 
 		// ReSharper disable once MemberCanBeMadeStatic.Global
-		internal void OnProcessAvatar(GameObject avatarGameObject) {
-			MAExAnimatorGeneratorModuleBase[] generatorModules = avatarGameObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true)
+		internal void OnProcessAvatar(BuildContext context) {
+			MAExAnimatorGeneratorModuleBase[] generatorModules = context.AvatarRootObject.transform.GetComponentsInChildren<MAExAnimatorGeneratorModuleBase>(true)
 				.Where(module => module.enabled)
 				.ToArray();
 		
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
-				generatorModule.GetFactory().PreProcess(avatarGameObject);
+				IControllerFactory factory = generatorModule.GetFactory() as IControllerFactory;
+				factory?.PreProcess(context);
 			}
 			
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
-				RuntimeAnimatorController controller = generatorModule.GetFactory().CreateController(avatarGameObject);
+				IControllerFactory factory = generatorModule.GetFactory() as IControllerFactory;
+				RuntimeAnimatorController controller = factory?.CreateController(context);
 				GameObject targetObject = generatorModule.gameObject;
 
 				ModularAvatarMergeAnimator mergeAnimator = targetObject.AddComponent<ModularAvatarMergeAnimator>();
@@ -30,7 +33,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			}
 			
 			foreach (MAExAnimatorGeneratorModuleBase generatorModule in generatorModules) {
-				generatorModule.GetFactory().PostProcess(avatarGameObject);
+				IControllerFactory factory = generatorModule.GetFactory() as IControllerFactory;
+				factory?.PostProcess(context);
 				Object.DestroyImmediate(generatorModule);
 			}
 		}

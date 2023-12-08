@@ -15,7 +15,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 		public abstract IRuntimeAnimatorFactory GetFactory();
 	}
 	
-	public abstract class MAExAnimatorGeneratorModuleBase<ModuleType> : MAExAnimatorGeneratorModuleBase where ModuleType : MAExAnimatorGeneratorModuleBase<ModuleType> {
+	public abstract class MAExAnimatorGeneratorModuleBase<ModuleType> : MAExAnimatorGeneratorModuleBase where ModuleType : MAExAnimatorGeneratorModuleBase {
 		
 		public override VRCAvatarDescriptor.AnimLayerType LayerType => VRCAvatarDescriptor.AnimLayerType.FX;
 		public override bool DeleteAttachedAnimator => true;
@@ -27,7 +27,7 @@ namespace raitichan.com.modular_avatar.extensions.Modules {
 			return _factory ?? (_factory = GetFactory(this));
 		}
 
-		private static IRuntimeAnimatorFactory<ModuleType> GetFactory(MAExAnimatorGeneratorModuleBase<ModuleType> module) {
+		private static IRuntimeAnimatorFactory<ModuleType> GetFactory(MAExAnimatorGeneratorModuleBase module) {
 			Type factoryType = AppDomain.CurrentDomain.GetAssemblies()
 				.SelectMany(assembly => assembly.GetTypes())
 				.Where(type => !type.IsAbstract && !type.IsInterface)
