@@ -9,8 +9,9 @@ using UnityEngine;
 using VRC.SDK3.Avatars.Components;
 
 namespace raitichan.com.modular_avatar.extensions.Editor {
-	[InitializeOnLoad]
+	// [InitializeOnLoad]
 	public class ModularAvatarExtensionsProcessor {
+		/*
 		static ModularAvatarExtensionsProcessor() {
 			MAPatcher.PreProcess += ProcessAvatar;
 			MAPatcher.PostProcess += PostProcessAvatar;
@@ -92,5 +93,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 		public static void InvokePostProcess(VRCAvatarDescriptor avatar) {
 			PostProcess?.Invoke(avatar.gameObject);
 		}
+		*/
 	}
 }

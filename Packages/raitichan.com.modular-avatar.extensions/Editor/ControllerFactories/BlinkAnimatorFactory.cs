@@ -1,17 +1,18 @@
-﻿using raitichan.com.modular_avatar.extensions.Modules;
+﻿using nadena.dev.ndmf;
+using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class BlinkAnimatorFactory : IRuntimeAnimatorFactory<MAExBlinkAnimatorGenerator> {
-		public MAExBlinkAnimatorGenerator Target { get; set; }
+	public class BlinkAnimatorFactory : ControllerFactoryBase<MAExBlinkAnimatorGenerator> {
+		
+		public override void PreProcess(BuildContext context) { }
 
-		public void PreProcess(GameObject avatarGameObject) { }
-
-		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = MAExUtils.CreateAnimator();
+		public override RuntimeAnimatorController CreateController(BuildContext context) {
+			AnimatorController controller = new AnimatorController();
+			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 			AnimationClip clip = this.CreateClip();
 			AssetDatabase.AddObjectToAsset(clip, controller);
 			MAExAnimatorFactoryUtils.CreateIdleLayerToAnimatorController(controller, "BlinkAnimation", clip, "Blink Idle");
@@ -19,8 +20,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			return controller;
 		}
 
-		public void PostProcess(GameObject avatarGameObject) { }
-
+		public override void PostProcess(BuildContext context) { }
+		
 		private AnimationClip CreateClip() {
 			AnimationClip source = this.Target.animationSource;
 			AnimationClip clip = Object.Instantiate(source);

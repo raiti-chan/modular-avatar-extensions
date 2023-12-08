@@ -1,21 +1,21 @@
 ﻿using System.Collections.Generic;
+using nadena.dev.ndmf;
 using raitichan.com.modular_avatar.extensions.Editor.ModuleExtensions;
 using raitichan.com.modular_avatar.extensions.Enums;
 using raitichan.com.modular_avatar.extensions.Modules;
 using UnityEditor;
 using UnityEditor.Animations;
 using UnityEngine;
-using static raitichan.com.modular_avatar.extensions.Modules.MAExGestureExpressionAnimationGenerator;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once UnusedType.Global
-	public class GestureExpressionAnimatorFactory : IRuntimeAnimatorFactory<MAExGestureExpressionAnimationGenerator> {
-		public MAExGestureExpressionAnimationGenerator Target { get; set; }
+	public class GestureExpressionAnimatorFactory : ControllerFactoryBase<MAExGestureExpressionAnimationGenerator> {
+		public override void PreProcess(BuildContext context) {
+		}
 
-		public void PreProcess(GameObject avatarGameObject) { }
-
-		public RuntimeAnimatorController CreateController(GameObject avatarGameObject) {
-			AnimatorController controller = MAExUtils.CreateAnimator();
+		public override RuntimeAnimatorController CreateController(BuildContext context) { 
+			AnimatorController controller = new AnimatorController();
+			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 
 			GestureAnimationLayerData leftAnimationLayerData = new GestureAnimationLayerData {
 				leftAndRight = LeftAndRight.Left,
@@ -44,7 +44,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			return controller;
 		}
 
-		public void PostProcess(GameObject avatarGameObject) { }
+		public override void PostProcess(BuildContext context) {
+		}
 
 		private AnimationClip CreateAnimationClip(LeftAndRight leftAndRight, Gesture gesture, Object saveTo) {
 			AnimationClip animationClip = this.Target.ExportAnimationClip(leftAndRight, gesture);
