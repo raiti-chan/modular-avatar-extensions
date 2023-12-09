@@ -11,7 +11,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class BlendShapePanel : VisualElement {
 		private const string UXML_GUID = "8e4dfd5912b768b4f996e76c6f47b96c";
 
-		private readonly TwoPaneSplitView _splitView;
+		private readonly TwoPaneSplitViewOld _splitView;
 		private readonly CustomListView _blendShapeListView;
 		private readonly CustomBindableElement _blendShapeView;
 
@@ -29,7 +29,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+			this._splitView = this.Q<TwoPaneSplitViewOld>("SplitView");
 
 			this._blendShapeListView = this._splitView.Q<CustomListView>("BlendShapeListView");
 			this._blendShapeListView.OnAdd = BlendShapeListViewOnAdd;

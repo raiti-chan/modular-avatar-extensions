@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
-	public class TwoPaneSplitView : VisualElement {
+	public class TwoPaneSplitViewOld : VisualElement {
 		private const string _USS_GUID = "399e3944d7ca4d279e8f53ba184d4d15";
 
 		private const string _USS_CLASS_NAME = "unity-two-pane-split-view";
@@ -21,7 +21,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 
 		private static readonly StyleSheet _STYLE_SHEET;
 
-		static TwoPaneSplitView() {
+		static TwoPaneSplitViewOld() {
 			string ussPath = AssetDatabase.GUIDToAssetPath(_USS_GUID);
 			_STYLE_SHEET = AssetDatabase.LoadAssetAtPath<StyleSheet>(ussPath);
 		}
@@ -86,7 +86,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			}
 		}
 
-		public TwoPaneSplitView() {
+		public TwoPaneSplitViewOld() {
 			AddToClassList(_USS_CLASS_NAME);
 			this.styleSheets.Add(_STYLE_SHEET);
 
@@ -118,7 +118,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 		/// <param name="fixedPaneIndex">0 for setting first child as the fixed pane, 1 for the second child element.</param>
 		/// <param name="fixedPaneStartDimension">Set an initial width or height for the fixed pane.</param>
 		/// <param name="orientation">Orientation of the split view.</param>
-		public TwoPaneSplitView(int fixedPaneIndex, float fixedPaneStartDimension, TwoPaneSplitViewOrientation orientation) : this() {
+		public TwoPaneSplitViewOld(int fixedPaneIndex, float fixedPaneStartDimension, TwoPaneSplitViewOrientation orientation) : this() {
 			this.Init(fixedPaneIndex, fixedPaneStartDimension, orientation);
 		}
 
@@ -346,7 +346,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 		}
 
 
-		public new class UxmlFactory : UxmlFactory<TwoPaneSplitView, UxmlTraits> { }
+		public new class UxmlFactory : UxmlFactory<TwoPaneSplitViewOld, UxmlTraits> { }
 
 		public new class UxmlTraits : VisualElement.UxmlTraits {
 			private readonly UxmlIntAttributeDescription _fixedPaneIndex = new UxmlIntAttributeDescription {
@@ -372,7 +372,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 				int fixedPaneInitialSize = _fixedPaneInitialDimension.GetValueFromBag(bag, cc);
 				TwoPaneSplitViewOrientation orientation = _orientation.GetValueFromBag(bag, cc);
 
-				((TwoPaneSplitView)ve).Init(fixedPaneIndex, fixedPaneInitialSize, orientation);
+				((TwoPaneSplitViewOld)ve).Init(fixedPaneIndex, fixedPaneInitialSize, orientation);
 			}
 		}
 	}
@@ -394,13 +394,13 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 	public class TwoPaneSplitViewResizer : MouseManipulator {
 		private Vector2 _start;
 		private bool _active;
-		private readonly TwoPaneSplitView _splitView;
+		private readonly TwoPaneSplitViewOld _splitViewOld;
 
 		private readonly int _direction;
 		private readonly TwoPaneSplitViewOrientation _orientation;
 
-		private VisualElement FixedPane => this._splitView.FixedPane;
-		private VisualElement FlexedPane => this._splitView.FlexedPane;
+		private VisualElement FixedPane => this._splitViewOld.FixedPane;
+		private VisualElement FlexedPane => this._splitViewOld.FlexedPane;
 
 		private float FixedPaneMinDimension {
 			get {
@@ -416,9 +416,9 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			}
 		}
 
-		public TwoPaneSplitViewResizer(TwoPaneSplitView splitView, int dir, TwoPaneSplitViewOrientation orientation) {
+		public TwoPaneSplitViewResizer(TwoPaneSplitViewOld splitViewOld, int dir, TwoPaneSplitViewOrientation orientation) {
 			this._orientation = orientation;
-			this._splitView = splitView;
+			this._splitViewOld = splitViewOld;
 			this._direction = dir;
 			this.activators.Add(new ManipulatorActivationFilter { button = MouseButton.LeftMouse });
 			this._active = false;
@@ -444,7 +444,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 				newDimension = this.FixedPaneMinDimension;
 			}
 
-			float maxDimension = this._orientation == TwoPaneSplitViewOrientation.Horizontal ? this._splitView.resolvedStyle.width : this._splitView.resolvedStyle.height;
+			float maxDimension = this._orientation == TwoPaneSplitViewOrientation.Horizontal ? this._splitViewOld.resolvedStyle.width : this._splitViewOld.resolvedStyle.height;
 			maxDimension -= this.FlexedPaneMinDimension;
 			if (newDimension > oldDimension && newDimension > maxDimension) {
 				newDimension = maxDimension;
@@ -452,21 +452,21 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 
 			if (this._orientation == TwoPaneSplitViewOrientation.Horizontal) {
 				this.FixedPane.style.width = newDimension;
-				if (this._splitView.FixedPaneIndex == 0) {
+				if (this._splitViewOld.FixedPaneIndex == 0) {
 					this.target.style.left = newDimension;
 				} else {
-					this.target.style.left = this._splitView.resolvedStyle.width - newDimension;
+					this.target.style.left = this._splitViewOld.resolvedStyle.width - newDimension;
 				}
 			} else {
 				this.FixedPane.style.height = newDimension;
-				if (this._splitView.FixedPaneIndex == 0) {
+				if (this._splitViewOld.FixedPaneIndex == 0) {
 					this.target.style.top = newDimension;
 				} else {
-					this.target.style.top = this._splitView.resolvedStyle.height - newDimension;
+					this.target.style.top = this._splitViewOld.resolvedStyle.height - newDimension;
 				}
 			}
 
-			this._splitView.FixedPaneDimension = newDimension;
+			this._splitViewOld.FixedPaneDimension = newDimension;
 		}
 
 		private void OnMouseDown(MouseDownEvent e) {

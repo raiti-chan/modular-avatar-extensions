@@ -1,8 +1,8 @@
 <ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements">
-    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView fixed-pane-initial-dimension="200" name="SplitView" picking-mode="Ignore">
+    <raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitViewOld fixed-pane-initial-dimension="200" name="SplitView" picking-mode="Ignore">
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="BlendShapeListView" binding-path="blendShapes" picking-mode="Ignore" title="SkinnedMeshRenderer" style="min-width: 200px;" />
         <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement name="BlendShapeView" is-bind-stopping="true" style="min-width: 200px;">
             <raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomListView name="WeightListView" title="BlendShapeWeight" item-height="25" is-bind-stopping="false" binding-path="weights" style="flex-grow: 1;" />
         </raitichan.com.modular_avatar.extensions.Editor.UIElement.CustomBindableElement>
-    </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitView>
+    </raitichan.com.modular_avatar.extensions.Editor.UIElement.TwoPaneSplitViewOld>
 </ui:UXML>

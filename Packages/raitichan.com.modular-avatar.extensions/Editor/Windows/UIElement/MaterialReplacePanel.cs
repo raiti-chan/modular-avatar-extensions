@@ -12,7 +12,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class MaterialReplacePanel : VisualElement {
 		private const string UXML_GUID = "8ddbf42a15e949c4c8a31a60b51c90bb";
 
-		private readonly TwoPaneSplitView _splitView;
+		private readonly TwoPaneSplitViewOld _splitView;
 		private readonly CustomListView _materialReplaceListView;
 		private readonly CustomBindableElement _materialReplaceView;
 
@@ -28,7 +28,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+			this._splitView = this.Q<TwoPaneSplitViewOld>("SplitView");
 
 			this._materialReplaceListView = this._splitView.Q<CustomListView>("MaterialReplaceListView");
 			this._materialReplaceListView.OnAdd = MaterialReplaceListViewOnAdd;

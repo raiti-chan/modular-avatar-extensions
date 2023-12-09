@@ -122,7 +122,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			this._listView.itemsSource = this._data;
 			this._listView.makeItem = this.ListViewMakeItem;
 			this._listView.bindItem = this.ListViewBindItem;
-			this._listView.onSelectionChanged += this.ListViewSelectionChanged;
+			this._listView.selectionChanged += this.ListViewSelectionChanged;
 			this._listView.contentContainer.pickingMode = PickingMode.Ignore;
 			this._listView.contentContainer.parent.pickingMode = PickingMode.Ignore;
 			this._listView.contentContainer.parent.parent.pickingMode = PickingMode.Ignore;
@@ -167,7 +167,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			}
 
 			this.ButtonStateChange();
-			this._listView.Refresh();
+			this._listView.Rebuild();
 		}
 
 		private void ButtonStateChange() {
@@ -274,7 +274,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 
 		private int _oldSelectIndex = -1;
 
-		private void ListViewSelectionChanged(List<object> obj) {
+		private void ListViewSelectionChanged(IEnumerable<object> obj) {
 			this.ButtonStateChange();
 			if (this.onSelectionChanged == null) return;
 			int selectIndex = this.SelectedIndex;
