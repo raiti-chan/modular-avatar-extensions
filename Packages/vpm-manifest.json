@@ -36,9 +36,9 @@
       "dependencies": {}
     },
     "vrchat.blackstartx.gesture-manager": {
-      "version": "3.8.7",
+      "version": "3.8.8",
       "dependencies": {
-        "com.vrchat.avatars": "3.2.x || 3.3.x || 3.4.x"
+        "com.vrchat.avatars": "3.2.x || 3.3.x || 3.4.x || 3.5.x"
       }
     },
     "lyuma.av3emulator": {

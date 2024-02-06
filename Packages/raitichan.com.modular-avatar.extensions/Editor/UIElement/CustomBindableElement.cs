@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.Unity;
 using UnityEditor;
+using UnityEditor.UIElements;
 using UnityEngine.UIElements;
 
 namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
@@ -20,7 +21,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 
 
 		public virtual void Bind(SerializedObject serializedObject) {
-			SerializedObjectUpdateWrapperHelper objWrapper = new SerializedObjectUpdateWrapperHelper(serializedObject);
+			// SerializedObjectUpdateWrapperHelper objWrapper = new SerializedObjectUpdateWrapperHelper(serializedObject);
+			SerializedObjectUpdateWrapperHelper objWrapper = null;
 			if (!string.IsNullOrEmpty(this.bindingPath)) {
 				SerializedProperty serializedProperty = serializedObject.FindProperty(this.bindingPath);
 				this.BindProperty(serializedProperty, objWrapper);
@@ -41,7 +43,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 							SerializedProperty childProperty = serializedObject.FindProperty(bindable.bindingPath);
 							if (childProperty == null) continue;
 							bindable.bindingPath = childProperty.propertyPath;
-							BindingExtensionsHelper.Bind(child, objWrapper, childProperty);
+							bindable.BindProperty(childProperty);
+							// BindingExtensionsHelper.Bind(child, objWrapper, childProperty);
 							break;
 						}
 					}
@@ -50,7 +53,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 		}
 
 		public virtual void BindProperty(SerializedProperty serializedProperty, SerializedObjectUpdateWrapperHelper objWrapper = null) {
-			if (objWrapper == null) objWrapper = new SerializedObjectUpdateWrapperHelper(serializedProperty.serializedObject);
+			// if (objWrapper == null) objWrapper = new SerializedObjectUpdateWrapperHelper(serializedProperty.serializedObject);
 
 			using (SerializedObjectBindEventHelper pooled = SerializedObjectBindEventHelper.GetPooled(serializedProperty.serializedObject)) {
 				if (BindingExtensionsHelper.SendBindingEvent(pooled.SerializedObjectBindEvent, this)) return;
@@ -63,7 +66,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 
 			this.RemoveBinding();
 			this.SaveChildBindingPath();
-			BindingExtensionsHelper.DoBindProperty(this, objWrapper, serializedProperty);
+			// BindingExtensionsHelper.DoBindProperty(this, objWrapper, serializedProperty);
 			this.ObjWrapper = objWrapper;
 			this.BindingProperty = serializedProperty;
 
@@ -83,7 +86,8 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 						SerializedProperty childProperty = serializedProperty.FindPropertyRelative(bindable.bindingPath);
 						if (childProperty == null) continue;
 						bindable.bindingPath = childProperty.propertyPath;
-						BindingExtensionsHelper.Bind(child, objWrapper, null);
+						bindable.BindProperty(childProperty);
+						// BindingExtensionsHelper.Bind(child, objWrapper, null);
 						continue;
 					}
 				}
@@ -105,14 +109,15 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 						customBindable.Unbind();
 						continue;
 					case IBindable bindable:
-						BindingExtensionsHelper.RemoveBinding(bindable);
+						child.Unbind();
+						// BindingExtensionsHelper.RemoveBinding(bindable);
 						continue;
 				}
 			}
 		}
 
 		public virtual void RemoveBinding() {
-			BindingExtensionsHelper.RemoveBinding(this);
+			// BindingExtensionsHelper.RemoveBinding(this);
 			this.IsBound = false;
 			this.ObjWrapper = null;
 			this.BindingProperty = null;
