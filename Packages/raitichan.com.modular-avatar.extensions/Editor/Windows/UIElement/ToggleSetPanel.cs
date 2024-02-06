@@ -9,7 +9,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 	public class ToggleSetPanel : VisualElement {
 		private const string UXML_GUID = "9dd14dd985ef24842a7bb001e45e917f";
 
-		private readonly TwoPaneSplitView _splitView;
+		private readonly TwoPaneSplitViewOld _splitView;
 		private readonly CustomListView _toggleSetListView;
 		private readonly ToggleSetContent _toggleSetContent;
 
@@ -23,7 +23,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Windows.UIElement {
 			VisualTreeAsset uxml = AssetDatabase.LoadAssetAtPath<VisualTreeAsset>(uxmlPath);
 			uxml.CloneTree(this);
 
-			this._splitView = this.Q<TwoPaneSplitView>("SplitView");
+			this._splitView = this.Q<TwoPaneSplitViewOld>("SplitView");
 
 			this._toggleSetListView = this._splitView.Q<CustomListView>("ToggleSetListView");
 			this._toggleSetListView.OnRemove = ToggleSetListViewOnRemove;
