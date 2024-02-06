@@ -123,11 +123,21 @@ namespace raitichan.com.modular_avatar.extensions.Editor.UIElement {
 			this._listView.makeItem = this.ListViewMakeItem;
 			this._listView.bindItem = this.ListViewBindItem;
 			this._listView.selectionChanged += this.ListViewSelectionChanged;
-			this._listView.contentContainer.pickingMode = PickingMode.Ignore;
-			this._listView.contentContainer.parent.pickingMode = PickingMode.Ignore;
-			this._listView.contentContainer.parent.parent.pickingMode = PickingMode.Ignore;
-			if (this._listView.contentContainer.parent.parent is ScrollView scrollView) {
-				scrollView.showVertical = true;
+			
+			// if (this._listView.contentContainer.parent.parent is ScrollView scrollView) {
+			//	scrollView.showVertical = true;
+			// }
+			
+			// this._listView.contentContainer.pickingMode = PickingMode.Ignore;
+			// this._listView.contentContainer.parent.pickingMode = PickingMode.Ignore;
+			// this._listView.contentContainer.parent.parent.pickingMode = PickingMode.Ignore;
+			
+			foreach (VisualElement child in this._listView.hierarchy.Children()) {
+				if (child is not ScrollView scrollView) continue;
+				scrollView.verticalScrollerVisibility = ScrollerVisibility.AlwaysVisible;
+				scrollView.pickingMode = PickingMode.Ignore;
+				scrollView.contentContainer.parent.pickingMode = PickingMode.Ignore;
+				scrollView.contentContainer.parent.parent.pickingMode = PickingMode.Ignore;
 			}
 
 			this._arraySizeField = this.Q<IntegerField>("_ArraySizeField");
