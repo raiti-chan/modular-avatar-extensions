@@ -19,9 +19,12 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Inspectors {
 		}
 
 		protected virtual VisualElement CreateInnerInspectorGUI() {
-			InspectorElement throwaway = new InspectorElement();
-			MethodInfo mInfo = typeof(InspectorElement).GetMethod("CreateIMGUIInspectorFromEditor", BindingFlags.NonPublic | BindingFlags.Instance);
-			return mInfo?.Invoke(throwaway, new object[] {this.serializedObject, this, false}) as VisualElement;
+			// InspectorElement throwaway = new InspectorElement();
+			// MethodInfo mInfo = typeof(InspectorElement).GetMethod("CreateIMGUIInspectorFromEditor", BindingFlags.NonPublic | BindingFlags.Instance);
+			// return mInfo?.Invoke(throwaway, new object[] {this.serializedObject, this, false}) as VisualElement;
+			InspectorElement throwaway = new();
+			MethodInfo mInfo = typeof(InspectorElement).GetMethod("CreateInspectorElementUsingIMGUI", BindingFlags.NonPublic | BindingFlags.Instance);
+			return mInfo?.Invoke(throwaway, new object[] {this}) as VisualElement;
 		}
 
 		public sealed override void OnInspectorGUI() {
