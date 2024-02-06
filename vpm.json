@@ -6,6 +6,24 @@
   "packages": {
     "raitichan.com.modular-avatar.extensions": {
       "versions": {
+        "1.2.0-bata.1" : {
+          "name": "raitichan.com.modular-avatar.extensions",
+          "displayName": "Modular Avatar Extensions",
+          "version": "1.2.0-bata.1",
+          "unity": "2022.3",
+          "description": "Extend Modular Avatar and add various modules.",
+          "author": {
+            "name": "Raitichan",
+            "email": "",
+            "url": "https://github.com/raiti-chan"
+          },
+          "url": "https://github.com/raiti-chan/modular-avatar-extensions/releases/download/1.2.0-bata.1/raitichan.com.modular-avatar.extensions-1.2.0-bata.1.zip",
+          "repo": "https://raw.githubusercontent.com/raiti-chan/modular-avatar-extensions/master/vpm.json",
+          "vpmDependencies": {
+            "com.vrchat.avatars": ">=3.5.0",
+            "nadena.dev.modular-avatar": ">=1.8.3"
+          }
+        },
         "1.1.0-bata.9" : {
           "name": "raitichan.com.modular-avatar.extensions",
           "displayName": "Modular Avatar Extensions",
