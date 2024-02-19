@@ -67,7 +67,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 				type = VRCExpressionsMenu.Control.ControlType.Toggle,
 				parameter = new VRCExpressionsMenu.Control.Parameter { name = this.Target.parameterName },
 			});
-			AssetDatabase.CreateAsset(expressionsMenu, UtilHelper.GenerateAssetPath());
+			AssetDatabase.AddObjectToAsset(expressionsMenu, context.AssetContainer);
 			menuInstaller.menuToAppend = expressionsMenu;
 
 			ModularAvatarParameters parameters = targetObject.GetComponent<ModularAvatarParameters>();

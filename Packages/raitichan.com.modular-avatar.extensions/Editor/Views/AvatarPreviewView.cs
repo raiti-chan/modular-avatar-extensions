@@ -112,11 +112,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.Views {
 					Vector3 extents = this._bounds.extents;
 					this._camera.transform.position = new Vector3(center.x, center.y, 1);
 					this._cameraObj.transform.rotation = Quaternion.Euler(0, 180, 0);
-					if (extents.x > extents.y) {
-						this._camera.orthographicSize = (float)this._height / this._width * extents.x;
-					} else {
-						this._camera.orthographicSize = extents.y;
-					}
+					this._camera.orthographicSize = extents.x > extents.y ? extents.x : extents.y;
 				}
 					break;
 				default:

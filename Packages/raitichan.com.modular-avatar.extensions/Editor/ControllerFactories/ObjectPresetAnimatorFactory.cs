@@ -157,7 +157,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			GameObject targetObject = this.Target.gameObject;
 			ModularAvatarMenuInstaller menuInstaller = targetObject.GetComponent<ModularAvatarMenuInstaller>();
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
-			AssetDatabase.CreateAsset(expressionsMenu, UtilHelper.GenerateAssetPath());
+			AssetDatabase.AddObjectToAsset(expressionsMenu, context.AssetContainer);
 
 			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
 				name = this.Target.displayName,

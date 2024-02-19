@@ -9,7 +9,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 	// ReSharper disable once ClassNeverInstantiated.Global
 	public class EarIdleAnimatorFactory : ControllerFactoryBase<MAExEarIdleAnimatorGenerator> {
 		public override void PreProcess(BuildContext context) {
-			throw new System.NotImplementedException();
 		}
 
 		public override RuntimeAnimatorController CreateController(BuildContext context) {
@@ -22,7 +21,6 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		}
 
 		public override void PostProcess(BuildContext context) {
-			throw new System.NotImplementedException();
 		}
 
 		private enum Axis {
