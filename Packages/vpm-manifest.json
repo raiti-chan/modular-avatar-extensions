@@ -3,9 +3,6 @@
     "com.vrchat.core.vpm-resolver": {
       "version": "0.1.17"
     },
-    "nadena.dev.modular-avatar": {
-      "version": "1.5.1"
-    },
     "jp.lilxyzw.liltoon": {
       "version": "1.4.0"
     },
@@ -17,22 +14,21 @@
     },
     "com.vrchat.avatars": {
       "version": "3.5.0"
+    },
+    "nadena.dev.ndmf": {
+      "version": "1.4.1"
+    },
+    "nadena.dev.modular-avatar": {
+      "version": "1.9.13"
     }
   },
   "locked": {
     "com.vrchat.core.vpm-resolver": {
-      "version": "0.1.27",
+      "version": "0.1.28",
       "dependencies": {}
     },
-    "nadena.dev.modular-avatar": {
-      "version": "1.8.3",
-      "dependencies": {
-        "com.vrchat.avatars": ">=3.2.0",
-        "nadena.dev.ndmf": ">=1.2.5 <2.0.0-a"
-      }
-    },
     "jp.lilxyzw.liltoon": {
-      "version": "1.4.1",
+      "version": "1.7.2",
       "dependencies": {}
     },
     "vrchat.blackstartx.gesture-manager": {
@@ -42,24 +38,31 @@
       }
     },
     "lyuma.av3emulator": {
-      "version": "3.2.4",
+      "version": "3.3.1",
       "dependencies": {
-        "com.vrchat.avatars": ">=3.1.0 <3.5.0"
+        "com.vrchat.avatars": ">=3.1.0 <3.6.0"
       }
     },
-    "nadena.dev.ndmf": {
-      "version": "1.2.5",
-      "dependencies": {}
-    },
     "com.vrchat.avatars": {
-      "version": "3.5.0",
+      "version": "3.5.1",
       "dependencies": {
-        "com.vrchat.base": "3.5.0"
+        "com.vrchat.base": "3.5.1"
       }
     },
     "com.vrchat.base": {
-      "version": "3.5.0",
+      "version": "3.5.1",
       "dependencies": {}
+    },
+    "nadena.dev.ndmf": {
+      "version": "1.4.1",
+      "dependencies": {}
+    },
+    "nadena.dev.modular-avatar": {
+      "version": "1.9.13",
+      "dependencies": {
+        "com.vrchat.avatars": ">=3.4.0",
+        "nadena.dev.ndmf": ">=1.4.1 <2.0.0-a"
+      }
     }
   }
 }
