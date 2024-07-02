@@ -2,7 +2,6 @@
 using System.Linq;
 using nadena.dev.modular_avatar.core;
 using nadena.dev.ndmf;
-using raitichan.com.modular_avatar.extensions.Editor.ReflectionHelper.ModularAvatar;
 using raitichan.com.modular_avatar.extensions.Modules;
 using raitichan.com.modular_avatar.extensions.Serializable;
 using UnityEditor;
@@ -28,26 +27,78 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			AnimatorController controller = new AnimatorController();
 			AssetDatabase.AddObjectToAsset(controller, context.AssetContainer);
 			string path = MAExAnimatorFactoryUtils.GetBindingPath(this.Target.transform);
-			if (this.Target.GetComponent<ModularAvatarBoneProxy>() is ModularAvatarBoneProxy boneProxy) {
-				// BoneProxyがあった場合BoneProxyの参照先をパスにする
-				// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
-				if (boneProxy.target != null) {
-					path = $"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{Target.name}";
+			{
+				if (this.Target.GetComponent<ModularAvatarBoneProxy>() is { } boneProxy) {
+					// BoneProxyがあった場合BoneProxyの参照先をパスにする
+					// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+					if (boneProxy.target != null) {
+						path = $"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{Target.name}";
+					}
+				}
+			}
+
+			List<string> additionalPaths = new List<string>();
+			foreach (GameObject additionalTarget in this.Target.additionalToggleObjects) {
+				if (additionalTarget.GetComponent<ModularAvatarBoneProxy>() is { } boneProxy) {
+					// BoneProxyがあった場合BoneProxyの参照先をパスにする
+					// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+					if (boneProxy.target != null) {
+						additionalPaths.Add($"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{additionalTarget.name}");
+					}
+				} else {
+					additionalPaths.Add($"{MAExAnimatorFactoryUtils.GetBindingPath(additionalTarget.transform)}");
+				}
+			}
+
+			List<string> additionalInvertPaths = new List<string>();
+			foreach (GameObject additionalTarget in this.Target.additionalInvertToggleObjects) {
+				if (additionalTarget.GetComponent<ModularAvatarBoneProxy>() is { } boneProxy) {
+					// BoneProxyがあった場合BoneProxyの参照先をパスにする
+					// TODO: 通常BoneProxyが解決してくれる筈だけど動かない原因を突き止める
+					if (boneProxy.target != null) {
+						additionalInvertPaths.Add($"{MAExAnimatorFactoryUtils.GetBindingPath(boneProxy.target)}/{additionalTarget.name}");
+					}
+				} else {
+					additionalInvertPaths.Add($"{MAExAnimatorFactoryUtils.GetBindingPath(additionalTarget.transform)}");
 				}
 			}
 
 			AnimationClip offClip = new AnimationClip { name = $"{this.Target.parameterName}_OFF" };
-			AnimationCurve offCurve = new AnimationCurve();
-			offCurve.AddKey(new Keyframe(0, 0));
-			offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
+			{
+				AnimationCurve offCurve = new AnimationCurve();
+				offCurve.AddKey(new Keyframe(0, 0));
+				offClip.SetCurve(path, typeof(GameObject), "m_IsActive", offCurve);
+			}
 			this.AddBlendShapeCurve(offClip, this.Target.isInvert == this.Target.defaultValue);
+			foreach (string additionalPath in additionalPaths) {
+				AnimationCurve offCurve = new AnimationCurve();
+				offCurve.AddKey(new Keyframe(0, 0));
+				offClip.SetCurve(additionalPath, typeof(GameObject), "m_IsActive", offCurve);
+			}
+			foreach (string additionalInvertPath in additionalInvertPaths) {
+				AnimationCurve offCurve = new AnimationCurve();
+				offCurve.AddKey(new Keyframe(0, 1));
+				offClip.SetCurve(additionalInvertPath, typeof(GameObject), "m_IsActive", offCurve);
+			}
 			AssetDatabase.AddObjectToAsset(offClip, controller);
 
 			AnimationClip onClip = new AnimationClip { name = $"{this.Target.parameterName}_ON" };
-			AnimationCurve onCurve = new AnimationCurve();
-			onCurve.AddKey(new Keyframe(0, 1));
-			onClip.SetCurve(path, typeof(GameObject), "m_IsActive", onCurve);
+			{
+				AnimationCurve onCurve = new AnimationCurve();
+				onCurve.AddKey(new Keyframe(0, 1));
+				onClip.SetCurve(path, typeof(GameObject), "m_IsActive", onCurve);
+			}
 			this.AddBlendShapeCurve(onClip, this.Target.isInvert != this.Target.defaultValue);
+			foreach (string additionalPath in additionalPaths) {
+				AnimationCurve onCurve = new AnimationCurve();
+				onCurve.AddKey(new Keyframe(0, 1));
+				onClip.SetCurve(additionalPath, typeof(GameObject), "m_IsActive", onCurve);
+			}
+			foreach (string additionalInvertPath in additionalInvertPaths) {
+				AnimationCurve onCurve = new AnimationCurve();
+				onCurve.AddKey(new Keyframe(0, 0));
+				onClip.SetCurve(additionalInvertPath, typeof(GameObject), "m_IsActive", onCurve);
+			}
 			AssetDatabase.AddObjectToAsset(onClip, controller);
 
 
@@ -60,6 +111,24 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 		public override void PostProcess(BuildContext context) {
 			GameObject targetObject = this.Target.gameObject;
 			ModularAvatarMenuInstaller menuInstaller = targetObject.GetComponent<ModularAvatarMenuInstaller>();
+			if (menuInstaller == null) menuInstaller = targetObject.AddComponent<ModularAvatarMenuInstaller>();
+			menuInstaller.menuToAppend = null;
+
+			ModularAvatarMenuItem menuItem = targetObject.GetComponent<ModularAvatarMenuItem>();
+			if (menuItem == null && targetObject.GetComponent<ModularAvatarMenuGroup>() == null) {
+				targetObject.AddComponent<ModularAvatarMenuGroup>();
+			}
+
+			if (menuItem == null) {
+				GameObject menuItemObject = new GameObject(this.Target.displayName);
+				menuItemObject.transform.SetParent(targetObject.transform);
+				menuItem = menuItemObject.AddComponent<ModularAvatarMenuItem>();
+			}
+
+			menuItem.Control.icon = this.Target.menuIcon;
+			menuItem.Control.type = VRCExpressionsMenu.Control.ControlType.Toggle;
+			menuItem.Control.parameter = new VRCExpressionsMenu.Control.Parameter { name = this.Target.parameterName };
+			/*
 			VRCExpressionsMenu expressionsMenu = ScriptableObject.CreateInstance<VRCExpressionsMenu>();
 			expressionsMenu.controls.Add(new VRCExpressionsMenu.Control {
 				name = this.Target.displayName,
@@ -69,8 +138,10 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			});
 			AssetDatabase.AddObjectToAsset(expressionsMenu, context.AssetContainer);
 			menuInstaller.menuToAppend = expressionsMenu;
+			*/
 
 			ModularAvatarParameters parameters = targetObject.GetComponent<ModularAvatarParameters>();
+			if (parameters == null) parameters = targetObject.AddComponent<ModularAvatarParameters>();
 			parameters.parameters.Add(new ParameterConfig {
 				nameOrPrefix = this.Target.parameterName,
 				internalParameter = this.Target.isInternal,
@@ -83,6 +154,14 @@ namespace raitichan.com.modular_avatar.extensions.Editor.ControllerFactories {
 			// デフォルトの状態に設定(Animatorをブロックされている際にもデフォルト状態で表示されるように)
 			// オブジェクト
 			targetObject.SetActive(this.Target.isInvert != this.Target.defaultValue);
+			
+			foreach (GameObject additionalToggleObject in this.Target.additionalToggleObjects) {
+				additionalToggleObject.SetActive(this.Target.isInvert != this.Target.defaultValue);
+			}
+			
+			foreach (GameObject additionalInvertToggleObject in this.Target.additionalInvertToggleObjects) {
+				additionalInvertToggleObject.SetActive(this.Target.isInvert == this.Target.defaultValue);
+			}
 
 			// ブレンドシェイプは、現在の状態をデフォルトとするのでいらない
 		}
