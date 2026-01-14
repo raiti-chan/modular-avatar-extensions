@@ -22,7 +22,7 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 			if (targetController == null) return;
 
 			foreach (AnimatorControllerLayer animatorControllerLayer in targetController.layers) {
-				List<AnimatorState> states = GetAllState(animatorControllerLayer.stateMachine).ToList();
+				 List<AnimatorState> states = GetAllState(animatorControllerLayer.stateMachine).ToList();
 				/*
 				bool blendShapeFlag = false;
 				foreach (AnimatorState animatorState in states) {
