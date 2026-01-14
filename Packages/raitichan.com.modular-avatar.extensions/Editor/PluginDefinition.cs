@@ -9,12 +9,21 @@ namespace raitichan.com.modular_avatar.extensions.Editor {
 		public override string DisplayName => "Modular Avatar Ex";
 
 		protected override void Configure() {
-			Sequence seq = InPhase(BuildPhase.Generating);
+			Sequence seq = this.InPhase(BuildPhase.Generating);
+			seq.Run(RenderQueueTogglePath.Instance);
 			seq.Run(AnimatorGeneratorPath.Instance);
 
-			seq = InPhase(BuildPhase.Optimizing);
+			
+			seq = this.InPhase(BuildPhase.Optimizing);
 			seq.Run(MMDSetupPath.Instance);
 
+		}
+
+		internal class RenderQueueTogglePath : Pass<RenderQueueTogglePath> {
+			protected override void Execute(BuildContext context) {
+				RenderQueueToggleHook renderQueueToggleHook = new RenderQueueToggleHook(context);
+				renderQueueToggleHook.OnProcessAvatar();
+			}
 		}
 
 		internal class AnimatorGeneratorPath : Pass<AnimatorGeneratorPath> {
